@@ -31,7 +31,7 @@
 
 </head>
 
-<body style="background-image: url('img/home-bg.jpg')">
+<body style="background-image: url('home-bg.jpg')">
 
     <!-- Page Header -->
     <!-- Set your background image for this header on the line below. -->
@@ -50,23 +50,26 @@
     </header>
     <!--Login page-->
 
-		<FORM NAME="LoginForm" ACTION="post.html" METHOD="post" ><CENTER>
+		<FORM NAME="LoginForm" ACTION="login.php" METHOD="post" ><CENTER>
 
 		<P><CENTER>To login successfully, you need to submit a valid userid and password</CENTER></P>
 		<TABLE>
 		<TR VALIGN=TOP ALIGN=LEFT>
 		<TD><B><I>Userid:</I></B></TD>
-		<TD><INPUT TYPE="text" NAME="USERID" VALUE="userid"><BR></TD>
+		<TD><INPUT TYPE="text" NAME="USERID" VALUE=""><BR></TD>
 		</TR>
 		<TR VALIGN=TOP ALIGN=LEFT>
 		<TD><B><I>Password:</I></B></TD>
-		<TD><INPUT TYPE="password" NAME="PASSWD" VALUE="password"></TD>
+		<TD><INPUT TYPE="password" NAME="PASSWD" VALUE=""></TD>
 		</TR>
 		</TABLE>
-
 		<INPUT TYPE="submit" NAME="Submit" VALUE="LOGIN">
 		</CENTER>
 		</FORM>
+		<FORM NAME="Sign up" ACTION="signUp.php" METHOD="post" ><CENTER>
+		<INPUT TYPE="submit" NAME="Submit" VALUE="SIGN UP">
+		</CENTER>
+		</FORM>z
 
 </body>
 
