@@ -9,10 +9,11 @@
 
 <?php
 // define variables and set to empty values
-$nameErr = $emailErr = $genderErr = $websiteErr = "";
-$name = $email = $gender = $comment = $website = "";
+$usernameErr = $last_nameErr = $first_nameErr = $emailErr = $phoneErr = "";
+$username = $last_name = $first_name = $email = $phone = $address ="";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	echo "fsdjkhnfsdooshs";
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
    } else {
@@ -77,7 +78,7 @@ function test_input($data) {
 }
 ?>
 
-<h2>PHP Form Validation Example</h2>
+<h2>Sign Up!!!</h2>
 <p><span class="error">* required field.</span></p>
 <form method="post" action="index.html" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
    UserName: <input type="text" name="username" value="<?php echo $username;?>">
