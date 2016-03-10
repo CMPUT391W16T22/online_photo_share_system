@@ -9,11 +9,10 @@
 
 <?php
 // define variables and set to empty values
-$usernameErr = $last_nameErr = $first_nameErr = $emailErr = $phoneErr = "";
-$username = $last_name = $first_name = $email = $phone = $address ="";
+$usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
+$username = $last_name = $first_name = $email = $password = $address ="";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	echo "fsdjkhnfsdooshs";
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
    } else {
@@ -52,13 +51,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      }
    }
     
-   if (empty($_POST["phone"])) {
+   if (empty($_POST["password"])) {
      $website = "";
    } else {
-     $phone = test_input($_POST["phone"]);
+     $password = test_input($_POST["password"]);
      // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
-     if (!filter_var($phone, FILTER_VALIDATE_INT)) {
-       $phoneErr = "Invalid number";
+     if (!filter_var($password, FILTER_VALIDATE_INT)) {
+       $passwordErr = "Invalid number";
      }
    }
 
@@ -93,8 +92,8 @@ function test_input($data) {
    E-mail: <input type="text" name="email" value="<?php echo $email;?>">
    <span class="error">* <?php echo $emailErr;?></span>
    <br><br>
-   Phone Number: <input type="int" name="phone" value="<?php echo $phone;?>">
-   <span class="error"><?php echo $phoneErr;?></span>
+   password Number: <input type="int" name="password" value="<?php echo $password;?>">
+   <span class="error"><?php echo $passwordErr;?></span>
    <br><br>
    Address: <textarea name="address" rows="5" cols="40"><?php echo $address;?></textarea>
    <br><br>

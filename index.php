@@ -36,41 +36,57 @@
 <?php
 // define variables and set to empty values
 $username = $password = "";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$conn=oci_connect('xinchao','wang0408');
+$conn=oci_connect('xinchao','wang0408');
 	if($conn)
-		echo "Connection succeded\n";
+		echo "Connection succeded<br>";
 	else
 	{
 		echo "Connection failed";
 	    $err = oci_error();
 		trigger_error(htmlentities($err['message'], ENT_QUOTES), E_USER_ERROR);	
 	}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	if (empty($_POST["username"])) {
      $usernameErr = "UserName is required";
    } else {
      $username = test_input($_POST["username"]);
+     echo $username;
+     echo "<br>";
  	}
     if (empty($_POST["password"])) {
      $passwordErr = "password is required";
    } else {
      $password = test_input($_POST["password"]);
+     echo $password;
+     echo "<br>";
    }
-	$query = "SELECT * from users WHERE username='".$username."' and password='".$password."'";
+	$query =  "SELECT * from users WHERE user_name='".$username."' and password='".$password."'";
 	 //Store resultsof select query
-     $result = OCIParse($conn, $query);
-     
-     //Just check
-     //$sql = OCIParse($connect, $query);
-     if($result) {
-     	  echo $result;
-          echo "the user found!!!";
-          exit;
-      }else{
-      	echo "user not found!!!!!";
-      }
+     $result = oci_parse($conn,$query);
+     $res=oci_execute($result);
+     if (!$res) {
+		$err = oci_error($result);
+		echo htmlentities($err['message']);
+           } else { echo 'Rows Extracted <br/>'; }
+           
+	   //Display extracted rows
+	   while ($row = oci_fetch_array($result, OCI_ASSOC)) {
+	   	
+		foreach ($row as $item) {
+			echo $item.'&nbsp;';
+		}
+		echo '<br/>';
+		$count = OCIRowCount($result); 
+	     echo $count;
+	     echo "<br>";
+
+	    if ($count==1 and $username=="admin"){
+	    	header('Location: admin.php');
+	    }elseif ($count==1) {
+	    	header('Location: costomer.php');
+	    }
+	   }
 }
 function test_input($data) {
 	   $data = trim($data);
@@ -103,12 +119,12 @@ function test_input($data) {
 		<TABLE>
 		<TR VALIGN=TOP ALIGN=LEFT>
 		<TD><B><I>Username:</I></B></TD>
-		<TD><INPUT TYPE="text" NAME="username" values="<?php echo $username;?>">
+		<TD><INPUT TYPE="text" NAME="username">
 		<BR></TD>
 		</TR>
 		<TR VALIGN=TOP ALIGN=LEFT>
 		<TD><B><I>Password:</I></B></TD>
-		<TD><INPUT TYPE="password" NAME="password" values="<?php echo $passwords;?>"></TD>
+		<TD><INPUT TYPE="password" NAME="password"></TD>
 		</TR>
 		</TABLE>
 		<INPUT TYPE="submit" NAME="Submit" VALUE="LOGIN">
