@@ -76,13 +76,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    }
     
    if (empty($_POST["password"])) {
-     $website = "";
+     $passwordErr = "password is required";
    } else {
      $password = test_input($_POST["password"]);
-     // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
-     if (!filter_var($password, FILTER_VALIDATE_INT)) {
-       $passwordErr = "Invalid number";
-     }
    }
 
    if (empty($_POST["address"])) {
@@ -154,7 +150,7 @@ function checkExist($conn,$name){
    <span class="error">* <?php echo $emailErr;?></span>
    <br><br>
    password Number: <input type="int" name="password" value="<?php echo $password;?>">
-   <span class="error"><?php echo $passwordErr;?></span>
+   <span class="error">*<?php echo $passwordErr;?></span>
    <br><br>
    Address: <textarea name="address" rows="5" cols="40"><?php echo $address;?></textarea>
    <br><br>
