@@ -138,7 +138,7 @@ function checkExist($conn,$name){
 }
 ?>
 
-<h2>Please fill up the form blew\</h2>
+<h2>Please fill up the form blew</h2>
 <p><span class="error">* required field.</span></p>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
    UserName: <input type="text" name="username" value="<?php echo $username;?>">

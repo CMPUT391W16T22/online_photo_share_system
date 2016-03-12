@@ -13,23 +13,24 @@ include ("PHPconnectionDB.php");
 	   //establish connection
 $conn=connect();
                
+          
+
+
+
+
+
 // define variables and set to empty values
 $usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
 $username = $last_name = $first_name = $email = $password = $address = $last = "";
 
-
-
-	
-global $check = 1;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
-     $check = 0;
    } 
    
    elseif( checkExist($conn,$_POST["username"])==true){
 		   $usernameErr = "User Name is existed";
-   	   $check = 0;
+   
    
    }
 		 
@@ -41,43 +42,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      // check if name only contains letters and whitespace
      if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
        $usernameErr = "Only letters and white space allowed";
-		 $check = 0;     
      }
    }
    
    
    if (empty($_POST["last_name"])) {
      $last_nameErr = "Last Name is required";
-     $check = 0;
    } else {
      $last_name = test_input($_POST["last_name"]);
      // check if name only contains letters and whitespace
      if (!preg_match("/^[a-zA-Z ]*$/",$last_name)) {
        $last_nameErr = "Only letters and white space allowed";
-       $check = 0;
      }
    }
    if (empty($_POST["first_name"])) {
      $first_nameErr = "First Name is required";
-     $check = 0;
    } else {
      $first_name = test_input($_POST["first_name"]);
      // check if name only contains letters and whitespace
      if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
        $first_nameErr = "Only letters and white space allowed";
-       $check = 0;
      }
    }
   
    if (empty($_POST["email"])) {
      $emailErr = "Email is required";
-     $check = 0;
    } else {
      $email = test_input($_POST["email"]);
      // check if e-mail address is well-formed
      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
        $emailErr = "Invalid email format";
-       $check = 0;
      }
    }
     
@@ -88,7 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
      if (!filter_var($password, FILTER_VALIDATE_INT)) {
        $passwordErr = "Invalid number";
-       $check = 0;
      }
    }
 
@@ -99,7 +92,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    }
 
 }
-echo $check;
 
 function test_input($data) {
    $data = trim($data);
@@ -144,8 +136,6 @@ function checkExist($conn,$name){
  
 
 }
-
-
 ?>
 
 <h2>Please fill up the form blew</h2>
@@ -171,7 +161,6 @@ function checkExist($conn,$name){
 
    <input type="submit" name="submit" value="Submit">
 </form>
-<h3><?php echo $check?></h3>
 
 <?php
 echo "<h2>Your Input:</h2>";
@@ -187,20 +176,14 @@ echo $website;
 echo "<br>";
 echo $comment;
 echo "<br>";
-echo "hello wrold";
 
-$test = inputCheck();
-echo $test;
-if ($test==1){
-header('Location: index.php');}
-
- oci_free_statement($stid);
-	    oci_close($conn);
-	
-    
 ?>
 
-
+<?php
+if (1<0){
+header('Location: index.php');}
+    
+?>
 
 </body>
 </html>
