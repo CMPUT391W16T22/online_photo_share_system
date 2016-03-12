@@ -38,7 +38,7 @@
 $username = $password = "";
 $conn=oci_connect('xinchao','wang0408');
 	if($conn)
-		echo "Connection succeded<br>";
+		pass;
 	else
 	{
 		echo "Connection failed";
@@ -49,18 +49,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	if (empty($_POST["username"])) {
      $usernameErr = "UserName is required";
-   } else {
+   }else {
      $username = test_input($_POST["username"]);
-     echo $username;
-     echo "<br>";
+     #echo $username;
+     #echo "<br>";
  	}
     if (empty($_POST["password"])) {
      $passwordErr = "password is required";
-   } else {
+   }else {
      $password = test_input($_POST["password"]);
-     echo $password;
-     echo "<br>";
-   }
+     #echo $password;
+     #echo "<br>";
+ 	}	
 	$query =  "SELECT * from users WHERE user_name='".$username."' and password='".$password."'";
 	 //Store resultsof select query
      $result = oci_parse($conn,$query);
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      if (!$res) {
 		$err = oci_error($result);
 		echo htmlentities($err['message']);
-           } else { echo 'Rows Extracted <br/>'; }
+           }
            
 	   //Display extracted rows
 	   while ($row = oci_fetch_array($result, OCI_ASSOC)) {
@@ -80,13 +80,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$count = OCIRowCount($result); 
 	     echo $count;
 	     echo "<br>";
-
+	 }
 	    if ($count==1 and $username=="admin"){
 	    	header('Location: admin.php');
 	    }elseif ($count==1) {
 	    	header('Location: costomer.php');
+	    }else{
+	    	$loginErr="Invalid username or password!";
 	    }
-	   }
+	   
 }
 function test_input($data) {
 	   $data = trim($data);
@@ -120,11 +122,16 @@ function test_input($data) {
 		<TR VALIGN=TOP ALIGN=LEFT>
 		<TD><B><I>Username:</I></B></TD>
 		<TD><INPUT TYPE="text" NAME="username">
-		<BR></TD>
+		<span class="error"><?php echo $usernameErr;?></span>
+		<BR><BR>
+		</TD>
 		</TR>
 		<TR VALIGN=TOP ALIGN=LEFT>
 		<TD><B><I>Password:</I></B></TD>
-		<TD><INPUT TYPE="password" NAME="password"></TD>
+		<TD><INPUT TYPE="password" NAME="password">
+		<span class="error"><?php echo $passwordErr;?></span>
+		<br><br>
+		</TD>
 		</TR>
 		</TABLE>
 		<INPUT TYPE="submit" NAME="Submit" VALUE="LOGIN">
@@ -134,5 +141,6 @@ function test_input($data) {
 		<INPUT TYPE="submit" NAME="Submit" VALUE="SIGN UP">
 		</CENTER>
 		</FORM>
+		<CENTER><?php echo $loginErr;?></CENTER>
 </body>
 </html>
