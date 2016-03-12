@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+.error {color: #FF0000;}
+</style>
+</head>
+<body>
+
+<?php
+
+include ("PHPconnectionDB.php");        
+	   //establish connection
+$conn=connect();
+               
+// define variables and set to empty values
+$usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
+$username = $last_name = $first_name = $email = $password = $address = $last = "";
+
+
+
+	
+global $check = 1;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   if (empty($_POST["username"])) {
+     $usernameErr = "User Name is required";
+     $check = 0;
+   } 
+   
+   elseif( checkExist($conn,$_POST["username"])==true){
+		   $usernameErr = "User Name is existed";
+   	   $check = 0;
+   
+   }
+		 
+   
+   
+   
+   else {
+     $username = test_input($_POST["username"]);
+     // check if name only contains letters and whitespace
+     if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
+       $usernameErr = "Only letters and white space allowed";
+		 $check = 0;     
+     }
+   }
+   
+   
+   if (empty($_POST["last_name"])) {
+     $last_nameErr = "Last Name is required";
+     $check = 0;
+   } else {
+     $last_name = test_input($_POST["last_name"]);
+     // check if name only contains letters and whitespace
+     if (!preg_match("/^[a-zA-Z ]*$/",$last_name)) {
+       $last_nameErr = "Only letters and white space allowed";
+       $check = 0;
+     }
+   }
+   if (empty($_POST["first_name"])) {
+     $first_nameErr = "First Name is required";
+     $check = 0;
+   } else {
+     $first_name = test_input($_POST["first_name"]);
+     // check if name only contains letters and whitespace
+     if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
+       $first_nameErr = "Only letters and white space allowed";
+       $check = 0;
+     }
+   }
+  
+   if (empty($_POST["email"])) {
+     $emailErr = "Email is required";
+     $check = 0;
+   } else {
+     $email = test_input($_POST["email"]);
+     // check if e-mail address is well-formed
+     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+       $emailErr = "Invalid email format";
+       $check = 0;
+     }
+   }
+    
+   if (empty($_POST["password"])) {
+     $website = "";
+   } else {
+     $password = test_input($_POST["password"]);
+     // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
+     if (!filter_var($password, FILTER_VALIDATE_INT)) {
+       $passwordErr = "Invalid number";
+       $check = 0;
+     }
+   }
+
+   if (empty($_POST["address"])) {
+     $address = "";
+   } else {
+     $address = test_input($_POST["address"]);
+   }
+
+}
+echo $check;
+
+function test_input($data) {
+   $data = trim($data);
+   $data = stripslashes($data);
+   $data = htmlspecialchars($data);
+   return $data;
+}
+
+   
+function checkExist($conn,$name){
+	
+
+	 //sql command
+           $sql = 'SELECT user_name FROM users';
+          
+           
+           //Prepare sql using conn and returns the statement identifier
+           $stid = oci_parse($conn, $sql);
+           
+           //Execute a statement returned from oci_parse()
+           $res=oci_execute($stid); 
+           
+           //if error, retrieve the error using the oci_error() function & output an error
+           if (!$res) {
+		$err = oci_error($stid);
+		echo htmlentities($err['message']);
+           }
+           
+   	
+    //Display extracted rows
+	   while ($row = oci_fetch_array($stid, OCI_ASSOC)) {
+	   	
+		foreach ($row as $item) {
+			if ($item == $name){
+					return true;			
+			}
+		}
+	   }
+	   
+	
+     	
+ 
+
+}
+
+
+?>
+
+<h2>Please fill up the form blew</h2>
+<p><span class="error">* required field.</span></p>
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+   UserName: <input type="text" name="username" value="<?php echo $username;?>">
+   <span class="error">* <?php echo $usernameErr;?></span>
+   <br><br>
+   First Name: <input type="text" name="first_name" value="<?php echo $first_name;?>">
+   <span class="error">* <?php echo $first_nameErr;?></span>
+   <br><br>
+   Last Name: <input type="text" name="last_name" value="<?php echo $last_name;?>">
+   <span class="error">* <?php echo $last_nameErr;?></span>
+   <br><br>
+   E-mail: <input type="text" name="email" value="<?php echo $email;?>">
+   <span class="error">* <?php echo $emailErr;?></span>
+   <br><br>
+   password Number: <input type="int" name="password" value="<?php echo $password;?>">
+   <span class="error"><?php echo $passwordErr;?></span>
+   <br><br>
+   Address: <textarea name="address" rows="5" cols="40"><?php echo $address;?></textarea>
+   <br><br>
+
+   <input type="submit" name="submit" value="Submit">
+</form>
+<h3><?php echo $check?></h3>
+
+<?php
+echo "<h2>Your Input:</h2>";
+echo $username;
+echo "<br>";
+echo $first_name;
+echo "<br>";
+echo $last_name;
+echo "<br>";
+echo $email;
+echo "<br>";
+echo $website;
+echo "<br>";
+echo $comment;
+echo "<br>";
+echo "hello wrold";
+
+$test = inputCheck();
+echo $test;
+if ($test==1){
+header('Location: index.php');}
+
+ oci_free_statement($stid);
+	    oci_close($conn);
+	
+    
+?>
+
+
+
+</body>
+</html>
