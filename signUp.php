@@ -10,7 +10,7 @@
 <?php
 // define variables and set to empty values
 $usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
-$username = $last_name = $first_name = $email = $password = $address ="";
+$username = $last_name = $first_name = $email = $password = $address = $last = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
@@ -77,9 +77,9 @@ function test_input($data) {
 }
 ?>
 
-<h2>Sign Up!!!</h2>
+<h2>Please fill up the form blew\</h2>
 <p><span class="error">* required field.</span></p>
-<form method="post" action="index.html" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
    UserName: <input type="text" name="username" value="<?php echo $username;?>">
    <span class="error">* <?php echo $nameErr;?></span>
    <br><br>
@@ -116,6 +116,11 @@ echo "<br>";
 echo $comment;
 echo "<br>";
 ?>
+
+<?php
+if (1>0){
+header('Location: index.php');}    
+?> }
 
 </body>
 </html>
