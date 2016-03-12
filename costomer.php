@@ -29,10 +29,13 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="index.php">Sign out</a>
+                        <a href="create_groups.php">Create new groups</a>
                     </li>
                     <li>
-                        <a href="setting.php">Settingt</a>
+                        <a href="edit_groups.php">Editing existing groups</a>
+                    </li>
+                    <li>
+                        <a href="index.php">Sign out</a>
                     </li>
                 </ul>
             </div>

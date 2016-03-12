@@ -8,17 +8,6 @@
 <body>
 
 <?php
-
-include ("PHPconnectionDB.php");        
-	   //establish connection
-$conn=connect();
-               
-          
-
-
-
-
-
 // define variables and set to empty values
 $usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
 $username = $last_name = $first_name = $email = $password = $address = $last = "";
@@ -26,26 +15,13 @@ $username = $last_name = $first_name = $email = $password = $address = $last = "
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
-   } 
-   
-   elseif( checkExist($conn,$_POST["username"])==true){
-		   $usernameErr = "User Name is existed";
-   
-   
-   }
-		 
-   
-   
-   
-   else {
+   } else {
      $username = test_input($_POST["username"]);
      // check if name only contains letters and whitespace
      if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
        $usernameErr = "Only letters and white space allowed";
      }
    }
-   
-   
    if (empty($_POST["last_name"])) {
      $last_nameErr = "Last Name is required";
    } else {
@@ -99,56 +75,19 @@ function test_input($data) {
    $data = htmlspecialchars($data);
    return $data;
 }
-
-   
-function checkExist($conn,$name){
-	
-
-	 //sql command
-           $sql = 'SELECT user_name FROM users';
-          
-           
-           //Prepare sql using conn and returns the statement identifier
-           $stid = oci_parse($conn, $sql);
-           
-           //Execute a statement returned from oci_parse()
-           $res=oci_execute($stid); 
-           
-           //if error, retrieve the error using the oci_error() function & output an error
-           if (!$res) {
-		$err = oci_error($stid);
-		echo htmlentities($err['message']);
-           }
-           
-   	
-    //Display extracted rows
-	   while ($row = oci_fetch_array($stid, OCI_ASSOC)) {
-	   	
-		foreach ($row as $item) {
-			if ($item == $name){
-					return true;			
-			}
-		}
-	   }
-	   
-	
-     	
- 
-
-}
 ?>
 
 <h2>Please fill up the form blew</h2>
 <p><span class="error">* required field.</span></p>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
    UserName: <input type="text" name="username" value="<?php echo $username;?>">
-   <span class="error">* <?php echo $usernameErr;?></span>
+   <span class="error">* <?php echo $nameErr;?></span>
    <br><br>
    First Name: <input type="text" name="first_name" value="<?php echo $first_name;?>">
-   <span class="error">* <?php echo $first_nameErr;?></span>
+   <span class="error">* <?php echo $nameErr;?></span>
    <br><br>
    Last Name: <input type="text" name="last_name" value="<?php echo $last_name;?>">
-   <span class="error">* <?php echo $last_nameErr;?></span>
+   <span class="error">* <?php echo $nameErr;?></span>
    <br><br>
    E-mail: <input type="text" name="email" value="<?php echo $email;?>">
    <span class="error">* <?php echo $emailErr;?></span>
@@ -176,14 +115,12 @@ echo $website;
 echo "<br>";
 echo $comment;
 echo "<br>";
-
 ?>
 
 <?php
-if (1<0){
-header('Location: index.php');}
-    
-?>
+if (1>0){
+header('Location: index.php');}    
+?> }
 
 </body>
 </html>
