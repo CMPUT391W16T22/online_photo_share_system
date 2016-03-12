@@ -16,7 +16,7 @@ $conn=connect();
           
 
 
-
+$GLOBALS['test'] = 1;
 
 
 // define variables and set to empty values
@@ -26,11 +26,12 @@ $username = $last_name = $first_name = $email = $password = $address = $last = "
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
+     $test = 0;
    } 
    
    elseif( checkExist($conn,$_POST["username"])==true){
 		   $usernameErr = "User Name is existed";
-   
+			$test = 0;   
    
    }
 		 
@@ -42,47 +43,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      // check if name only contains letters and whitespace
      if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
        $usernameErr = "Only letters and white space allowed";
+       $test = 0;
      }
    }
    
    
    if (empty($_POST["last_name"])) {
      $last_nameErr = "Last Name is required";
+     $test = 0;
    } else {
      $last_name = test_input($_POST["last_name"]);
      // check if name only contains letters and whitespace
      if (!preg_match("/^[a-zA-Z ]*$/",$last_name)) {
        $last_nameErr = "Only letters and white space allowed";
+       $test = 0;
      }
    }
    if (empty($_POST["first_name"])) {
      $first_nameErr = "First Name is required";
+     $test = 0;
    } else {
      $first_name = test_input($_POST["first_name"]);
      // check if name only contains letters and whitespace
      if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
        $first_nameErr = "Only letters and white space allowed";
+       $test = 0;
      }
    }
   
    if (empty($_POST["email"])) {
      $emailErr = "Email is required";
-   } else {
+     $test = 0;
      $email = test_input($_POST["email"]);
      // check if e-mail address is well-formed
      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
        $emailErr = "Invalid email format";
+       $test = 0;
      }
    }
     
    if (empty($_POST["password"])) {
-     $website = "";
+     $passwordErr = "password is required";
+     $test = 0;
    } else {
      $password = test_input($_POST["password"]);
-     // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
-     if (!filter_var($password, FILTER_VALIDATE_INT)) {
-       $passwordErr = "Invalid number";
-     }
    }
 
    if (empty($_POST["address"])) {
@@ -138,7 +142,7 @@ function checkExist($conn,$name){
 }
 ?>
 
-<h2>Please fill up the form blew</h2>
+<h2>Please fill up the form below</h2>
 <p><span class="error">* required field.</span></p>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
    UserName: <input type="text" name="username" value="<?php echo $username;?>">
@@ -154,7 +158,7 @@ function checkExist($conn,$name){
    <span class="error">* <?php echo $emailErr;?></span>
    <br><br>
    password Number: <input type="int" name="password" value="<?php echo $password;?>">
-   <span class="error"><?php echo $passwordErr;?></span>
+   <span class="error">*<?php echo $passwordErr;?></span>
    <br><br>
    Address: <textarea name="address" rows="5" cols="40"><?php echo $address;?></textarea>
    <br><br>
@@ -176,11 +180,13 @@ echo $website;
 echo "<br>";
 echo $comment;
 echo "<br>";
+echo $test;
+
 
 ?>
 
 <?php
-if (1<0){
+if ($test==1){
 header('Location: index.php');}
     
 ?>
