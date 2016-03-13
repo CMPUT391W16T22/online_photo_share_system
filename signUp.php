@@ -126,11 +126,6 @@ function checkExist($conn,$name){
 			}
 		}
 	   }
-	   
-	
-     	
- 
-
 }
 ?>
 
