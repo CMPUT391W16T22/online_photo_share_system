@@ -34,17 +34,11 @@
 <body style="background-image: url('home-bg.jpg')">
 
 <?php
+include ("PHPconnectionDB.php");        
+	   //establish connection
+$conn=connect();
 // define variables and set to empty values
 $username = $password = "";
-$conn=oci_connect('xinchao','wang0408');
-	if($conn)
-		pass;
-	else
-	{
-		echo "Connection failed";
-	    $err = oci_error();
-		trigger_error(htmlentities($err['message'], ENT_QUOTES), E_USER_ERROR);	
-	}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	if (empty($_POST["username"])) {
@@ -84,6 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	    if ($count==1 and $username=="admin"){
 	    	header('Location: admin.php');
 	    }elseif ($count==1) {
+	    	session_start();
+            $_SESSION['userid']=$username;
 	    	header('Location: costomer.php');
 	    }else{
 	    	$loginErr="Invalid username or password!";

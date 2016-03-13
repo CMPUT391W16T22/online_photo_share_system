@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    }
     
    if (empty($_POST["password"])) {
-     $passwordErr = "password is required";
+     $passwordErr = "Password is required";
    } else {
      $password = test_input($_POST["password"]);
    }
@@ -126,6 +126,11 @@ function checkExist($conn,$name){
 			}
 		}
 	   }
+	   
+	
+     	
+ 
+
 }
 ?>
 
