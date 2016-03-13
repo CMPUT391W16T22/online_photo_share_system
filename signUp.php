@@ -22,14 +22,15 @@ $GLOBALS['test'] = 1;
 // define variables and set to empty values
 $usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
 $username = $last_name = $first_name = $email = $password = $address = $last = "";
+$x = "user_name";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
-     $test = 0;
+     $test = 1;
    } 
    
-   elseif( checkExist($conn,$_POST["username"])==true){
+   elseif( checkExist($conn,$_POST["username"],$x)==true){
 		   $usernameErr = "User Name is existed";
 			$test = 0;   
    
@@ -105,11 +106,11 @@ function test_input($data) {
 }
 
    
-function checkExist($conn,$name){
+function checkExist($conn,$name,$x){
 	
 
 	 //sql command
-           $sql = 'SELECT user_name FROM users';
+           $sql = 'SELECT '.$x.' FROM users';
           
            
            //Prepare sql using conn and returns the statement identifier
