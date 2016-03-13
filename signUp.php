@@ -23,6 +23,7 @@ $GLOBALS['test'] = 1;
 $usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
 $username = $last_name = $first_name = $email = $password = $address = $last = "";
 $x = "user_name";
+$y = "users";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
@@ -30,23 +31,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      $test = 1;
    } 
    
-   elseif( checkExist($conn,$_POST["username"],$x)==true){
+   elseif( checkExist($conn,$_POST["username"],$x,$y)==true){
 		   $usernameErr = "User Name is existed";
 			$test = 0;   
    
+   }else{
+		$username = $_POST["username"];   
    }
 		 
    
    
    
-   else {
-     $username = test_input($_POST["username"]);
-     // check if name only contains letters and whitespace
-     if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
-       $usernameErr = "Only letters and white space allowed";
-       $test = 0;
-     }
-   }
+  
    
    
    if (empty($_POST["last_name"])) {
@@ -66,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    } else {
      $first_name = test_input($_POST["first_name"]);
      // check if name only contains letters and whitespace
-     if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
+     if (!preg_match("/^[a-zA-Z ]*$/",$first_name)) {
        $first_nameErr = "Only letters and white space allowed";
        $test = 0;
      }
@@ -81,6 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        $emailErr = "Invalid email format";
        $test = 0;
      }
+   }else{
+	$email = $_POST["email"];   
    }
     
    if (empty($_POST["password"])) {
@@ -106,11 +104,11 @@ function test_input($data) {
 }
 
    
-function checkExist($conn,$name,$x){
+function checkExist($conn,$name,$x,$y){
 	
 
 	 //sql command
-           $sql = 'SELECT '.$x.' FROM users';
+           $sql = 'SELECT '.$x.' FROM '.$y;
           
            
            //Prepare sql using conn and returns the statement identifier
@@ -155,13 +153,18 @@ function checkExist($conn,$name,$x){
    Last Name: <input type="text" name="last_name" value="<?php echo $last_name;?>">
    <span class="error">* <?php echo $last_nameErr;?></span>
    <br><br>
+
+	password Number: <input type="password" name="password" value="<?php echo $password;?>">
+   <span class="error">*<?php echo $passwordErr;?></span>
+   <br><br>   
+   
    E-mail: <input type="text" name="email" value="<?php echo $email;?>">
    <span class="error">* <?php echo $emailErr;?></span>
    <br><br>
-   password Number: <input type="int" name="password" value="<?php echo $password;?>">
+   Phone Number: <input type="int" name="phone" value="<?php echo $phone;?>">
    <span class="error">*<?php echo $passwordErr;?></span>
    <br><br>
-   Address: <textarea name="address" rows="5" cols="40"><?php echo $address;?></textarea>
+   Address: <textarea name="address" rows="5" cols="40" value = "<?php echo $address;?>"></textarea>
    <br><br>
 
    <input type="submit" name="submit" value="Submit">
@@ -177,9 +180,6 @@ echo $last_name;
 echo "<br>";
 echo $email;
 echo "<br>";
-echo $website;
-echo "<br>";
-echo $comment;
 echo "<br>";
 echo $test;
 
@@ -188,7 +188,16 @@ echo $test;
 
 <?php
 if ($test==1){
-header('Location: index.php');}
+	/*
+	 $sql = 'insert into users values ('.;
+          
+           
+           //Prepare sql using conn and returns the statement identifier
+    $stid = oci_parse($conn, $sql);
+           
+           //Execute a statement returned from oci_parse()
+    $res=oci_execute($stid);  */
+	header('Location: index.php');}
     
 ?>
 
