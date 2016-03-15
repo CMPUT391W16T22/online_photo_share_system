@@ -91,16 +91,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      $address = test_input($_POST["address"]);
    }
    
-   if (empty($_POST["phone"])) {
+
+  if(empty($_POST["phone"])){   	
      $phoneErr = "phone number is required";
-   }
-   elseif(!is_numeric($post["phone"])){
-		$phoneErr = "please enter your phone number from 0-9";
-		$test = 0;
+     $test = 0;
+		
    }
    else {
-     $phone = $_POST["phone"];
-   }
+			$phone = $_POST["phone"];    
+       }
 
 }
 
@@ -169,7 +168,7 @@ function checkExist($conn,$name,$x,$y){
    E-mail: <input type="text" name="email" value="<?php echo $email;?>">
    <span class="error">* <?php echo $emailErr;?></span>
    <br><br>
-   Phone Number: <input type="int" name="phone" value="<?php echo $phone;?>">
+   Phone Number: <input type="text" name="phone" value="<?php echo $phone;?>">
    <span class="error">*<?php echo $phoneErr;?></span>
    <br><br>
    Address: <textarea name="address" rows="5" cols="40" value = "<?php echo $address;?>"></textarea>
@@ -185,12 +184,20 @@ echo "<br>";
 echo $first_name;
 echo "<br>";
 echo $last_name;
+
+echo "<br>";
+echo $password;
+
+echo "<br>";
 echo $email;
 echo "<br>";
 echo "<br>";
 echo $test;
 echo "<br>";
 echo $phone;
+echo "<br>";
+echo $address;
+
 
 
 ?>
@@ -198,7 +205,7 @@ echo $phone;
 <?php
 if ($test==1){
 	
-   $sql="Insert into users values('".$username."','".$name."','".$groupname."',sysdate)";
+   $sql="Insert into users values('".$username."','".$groupname."',sysdate)";
 	$a = oci_parse($conn, $sql);
 	$res=oci_execute($a);
 	$r = oci_commit($conn);      
