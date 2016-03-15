@@ -27,6 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$a = oci_parse($conn, $sql);
 		$res=oci_execute($a);
 		$r = oci_commit($conn);
+		session_start();
+		$_SESSION['group_id']=$groupid;
+		$_SESSION['group_name']=$groupid;
+		header('Location: edit_groups.php');
 
 	}
 }
@@ -64,6 +68,7 @@ function checkExist($conn,$groupname,$name){
 		<TD><B><I>Group Name:</I></B></TD>
 		<TD><INPUT TYPE="text" NAME="groupname">
 		<span class="error"><?php echo $groupnameErr;?></span>
+		<span class="glyphicons glyphicons-user-add"></span>
 		<BR><BR>
 		</TD>
 		</TR>
