@@ -16,74 +16,67 @@ $conn=connect();
           
 
 
-$GLOBALS['test'] = 1;
+
 
 
 // define variables and set to empty values
 $usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
 $username = $last_name = $first_name = $email = $password = $address = $last = "";
-$x = "user_name";
-$y = "users";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
-     $test = 1;
    } 
    
-   elseif( checkExist($conn,$_POST["username"],$x,$y)==true){
+   elseif( checkExist($conn,$_POST["username"])==true){
 		   $usernameErr = "User Name is existed";
-			$test = 0;   
    
-   }else{
-		$username = $_POST["username"];   
+   
    }
 		 
    
    
    
-  
+   else {
+     $username = test_input($_POST["username"]);
+     // check if name only contains letters and whitespace
+     if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
+       $usernameErr = "Only letters and white space allowed";
+     }
+   }
    
    
    if (empty($_POST["last_name"])) {
      $last_nameErr = "Last Name is required";
-     $test = 0;
    } else {
      $last_name = test_input($_POST["last_name"]);
      // check if name only contains letters and whitespace
      if (!preg_match("/^[a-zA-Z ]*$/",$last_name)) {
        $last_nameErr = "Only letters and white space allowed";
-       $test = 0;
      }
    }
    if (empty($_POST["first_name"])) {
      $first_nameErr = "First Name is required";
-     $test = 0;
    } else {
      $first_name = test_input($_POST["first_name"]);
      // check if name only contains letters and whitespace
-     if (!preg_match("/^[a-zA-Z ]*$/",$first_name)) {
+     if (!preg_match("/^[a-zA-Z ]*$/",$username)) {
        $first_nameErr = "Only letters and white space allowed";
-       $test = 0;
      }
    }
   
    if (empty($_POST["email"])) {
      $emailErr = "Email is required";
-     $test = 0;
+   } else {
      $email = test_input($_POST["email"]);
      // check if e-mail address is well-formed
      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
        $emailErr = "Invalid email format";
-       $test = 0;
      }
-   }else{
-	$email = $_POST["email"];   
    }
     
    if (empty($_POST["password"])) {
-     $passwordErr = "password is required";
-     $test = 0;
+     $passwordErr = "Password is required";
    } else {
      $password = test_input($_POST["password"]);
    }
@@ -104,11 +97,11 @@ function test_input($data) {
 }
 
    
-function checkExist($conn,$name,$x,$y){
+function checkExist($conn,$name){
 	
 
 	 //sql command
-           $sql = 'SELECT '.$x.' FROM '.$y;
+           $sql = 'SELECT user_name FROM users';
           
            
            //Prepare sql using conn and returns the statement identifier
@@ -141,7 +134,7 @@ function checkExist($conn,$name,$x,$y){
 }
 ?>
 
-<h2>Please fill up the form below</h2>
+<h2>Please fill up the form blew</h2>
 <p><span class="error">* required field.</span></p>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
    UserName: <input type="text" name="username" value="<?php echo $username;?>">
@@ -153,18 +146,13 @@ function checkExist($conn,$name,$x,$y){
    Last Name: <input type="text" name="last_name" value="<?php echo $last_name;?>">
    <span class="error">* <?php echo $last_nameErr;?></span>
    <br><br>
-
-	password Number: <input type="password" name="password" value="<?php echo $password;?>">
-   <span class="error">*<?php echo $passwordErr;?></span>
-   <br><br>   
-   
    E-mail: <input type="text" name="email" value="<?php echo $email;?>">
    <span class="error">* <?php echo $emailErr;?></span>
    <br><br>
-   Phone Number: <input type="int" name="phone" value="<?php echo $phone;?>">
+   password Number: <input type="int" name="password" value="<?php echo $password;?>">
    <span class="error">*<?php echo $passwordErr;?></span>
    <br><br>
-   Address: <textarea name="address" rows="5" cols="40" value = "<?php echo $address;?>"></textarea>
+   Address: <textarea name="address" rows="5" cols="40"><?php echo $address;?></textarea>
    <br><br>
 
    <input type="submit" name="submit" value="Submit">
@@ -180,24 +168,17 @@ echo $last_name;
 echo "<br>";
 echo $email;
 echo "<br>";
+echo $website;
 echo "<br>";
-echo $test;
+echo $comment;
+echo "<br>";
 
 
 ?>
 
 <?php
-if ($test==1){
-	/*
-	 $sql = 'insert into users values ('.;
-          
-           
-           //Prepare sql using conn and returns the statement identifier
-    $stid = oci_parse($conn, $sql);
-           
-           //Execute a statement returned from oci_parse()
-    $res=oci_execute($stid);  */
-	header('Location: index.php');}
+if (1<0){
+header('Location: index.php');}
     
 ?>
 

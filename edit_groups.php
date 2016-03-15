@@ -28,16 +28,18 @@ $sql= "SELECT group_name FROM groups where user_name='".$name."'";
 <FORM NAME="Create Groups" METHOD="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"><CENTER>
 		<TABLE>
 		<TR VALIGN=TOP ALIGN=LEFT>
-		<TD><B><I>Group Name:</I></B></TD>
-		<TD><INPUT TYPE="text" NAME="groupname">
-		<span class="error"><?php echo $groupnameErr;?></span>
-		<span class="glyphicons glyphicons-user-add"></span>
+		<TD><B><I>Enter username:</I></B></TD>
+		<TD><INPUT TYPE="text" NAME="username">
+		<span class="error"><?php echo $usernameErr;?></span>
 		<BR><BR>
 		</TD>
 		</TR>
 		</TABLE>
-		<INPUT TYPE="submit" NAME="Submit" VALUE="Create">
+		<INPUT TYPE="submit" NAME="Submit" VALUE="Add Friend">
 		</CENTER>
-		</FORM>
+		</FORM><CENTER>
+		<INPUT TYPE="submit" NAME="Submit" VALUE="Delete Friend">
+		</CENTER>
+	<FORM>
 </body>
 </html>
