@@ -20,15 +20,15 @@ $GLOBALS['test'] = 1;
 
 
 // define variables and set to empty values
-$usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = "";
-$username = $last_name = $first_name = $email = $password = $address = $last = "";
+$usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = $phoneErr = "";
+$username = $last_name = $first_name = $email = $password = $address = $phone = "";
 $x = "user_name";
 $y = "users";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
-     $test = 1;
+     $test = 0;
    } 
    
    elseif( checkExist($conn,$_POST["username"],$x,$y)==true){
@@ -40,9 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    }
 		 
    
-   
-   
-  
    
    
    if (empty($_POST["last_name"])) {
@@ -85,13 +82,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      $passwordErr = "password is required";
      $test = 0;
    } else {
-     $password = test_input($_POST["password"]);
+     $password = $_POST["password"];
    }
 
    if (empty($_POST["address"])) {
      $address = "";
    } else {
      $address = test_input($_POST["address"]);
+   }
+   
+   if (empty($_POST["phone"])) {
+     $phoneErr = "phone number is required";
+   }
+   elseif(!is_numeric($post["phone"])){
+		$phoneErr = "please enter your phone number from 0-9";
+		$test = 0;
+   }
+   else {
+     $phone = $_POST["phone"];
    }
 
 }
@@ -162,7 +170,7 @@ function checkExist($conn,$name,$x,$y){
    <span class="error">* <?php echo $emailErr;?></span>
    <br><br>
    Phone Number: <input type="int" name="phone" value="<?php echo $phone;?>">
-   <span class="error">*<?php echo $passwordErr;?></span>
+   <span class="error">*<?php echo $phoneErr;?></span>
    <br><br>
    Address: <textarea name="address" rows="5" cols="40" value = "<?php echo $address;?>"></textarea>
    <br><br>
@@ -177,26 +185,25 @@ echo "<br>";
 echo $first_name;
 echo "<br>";
 echo $last_name;
-echo "<br>";
 echo $email;
 echo "<br>";
 echo "<br>";
 echo $test;
+echo "<br>";
+echo $phone;
 
 
 ?>
 
 <?php
 if ($test==1){
-	/*
-	 $sql = 'insert into users values ('.;
-          
+	
+   $sql="Insert into users values('".$username."','".$name."','".$groupname."',sysdate)";
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);
+	$r = oci_commit($conn);      
            
-           //Prepare sql using conn and returns the statement identifier
-    $stid = oci_parse($conn, $sql);
            
-           //Execute a statement returned from oci_parse()
-    $res=oci_execute($stid);  */
 	header('Location: index.php');}
     
 ?>
