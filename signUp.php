@@ -24,6 +24,8 @@ $usernameErr = $last_nameErr = $first_nameErr = $emailErr = $passwordErr = $phon
 $username = $last_name = $first_name = $email = $password = $address = $phone = "";
 $x = "user_name";
 $y = "users";
+$a = "email";
+$b = "persons";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
@@ -68,22 +70,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["email"])) {
      $emailErr = "Email is required";
      $test = 0;
-     $email = test_input($_POST["email"]);
+     
      // check if e-mail address is well-formed
      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
        $emailErr = "Invalid email format";
        $test = 0;
      }
-   }else{
-	$email = $_POST["email"];   
    }
-    
-   if (empty($_POST["password"])) {
-     $passwordErr = "password is required";
-     $test = 0;
-   } else {
-     $password = $_POST["password"];
+	elseif(checkExist($conn,$_POST["email"],$a,$b)==true) {
+					$emailErr = "Email is exist";
+     				$test = 0;
+		}   
+   else{
+	$email = test_input($_POST["email"]);   
    }
+
+   
+	if (empty($_POST["password"])) {
+     $passwordErr = "Password is required";
+   }else {
+     $password = test_input($_POST["password"]);
+     #echo $password;
+     #echo "<br>";
+ 	}	   
+   
+   
+   
 
    if (empty($_POST["address"])) {
      $address = "";
@@ -205,10 +217,18 @@ echo $address;
 <?php
 if ($test==1){
 	
-   $sql="Insert into users values('".$username."','".$groupname."',sysdate)";
+   $sql="Insert into users values('".$username."','".$password."',sysdate)";
 	$a = oci_parse($conn, $sql);
 	$res=oci_execute($a);
-	$r = oci_commit($conn);      
+	$r = oci_commit($conn);   
+	
+	
+	$sql="Insert into persons values('".$username."','".$first_name."','".$last_name."','".$address."','".$email."','".$phone."')";
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);
+	$r = oci_commit($conn);    
+	
+	
            
            
 	header('Location: index.php');}
