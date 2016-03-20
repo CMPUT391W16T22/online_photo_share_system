@@ -76,5 +76,6 @@ function checkExist($conn,$groupname,$name){
 		<INPUT TYPE="submit" NAME="Submit" VALUE="Create">
 		</CENTER>
 		</FORM>
+		
 </body>
 </html>

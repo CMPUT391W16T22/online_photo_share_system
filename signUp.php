@@ -173,7 +173,7 @@ function checkExist($conn,$name,$x,$y){
    <span class="error">* <?php echo $last_nameErr;?></span>
    <br><br>
 
-	password Number: <input type="password" name="password" value="<?php echo $password;?>">
+	password: <input type="password" name="password" value="<?php echo $password;?>">
    <span class="error">*<?php echo $passwordErr;?></span>
    <br><br>   
    
