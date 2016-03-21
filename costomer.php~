@@ -22,7 +22,7 @@
 
 </head>
 <?php
-	
+
 
 ?>
 <body style="background-image: url('costomer-bg.jpg')">
@@ -85,7 +85,7 @@
                         
                         
                         
-    								<form NAME="upload" METHOD="post" action="upload_file.php">">
+    								<FORM NAME="upload" METHOD="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 
 										<input type="submit" value="Open Form">
 									</form>

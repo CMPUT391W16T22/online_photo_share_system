@@ -33,33 +33,9 @@
 ?>
 
 <html>
-<head>
-    <style type="text/css">
-        body{
-            font-family: "Segoe UI", Arial, sans-serif;
-            text-align: center;
-        }
-        fieldset {
-            border: 3px solid rgb(255, 200, 150);
-            margin: 30px;
-        }
-        legend {
-            color: rgb(200, 50 ,50);
-            font-size: 20px;
-            font-weight: bold;
-        }
-        audio {
-            display: none;
-        }
-        .half {
-            width: 50%;
-            float: left;
-            line-height: 30px;
-        }
-    </style>
-</head>
+
 <body>
-<fieldset>
+
     <legend>Files Uploading</legend>
     <form name="upload-files" method="post" action="upload-one.php" enctype="multipart/form-data">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -71,9 +47,9 @@
         ?>
         <div style='margin-top: 30px; height: 100px'>
             <strong>1. Select Upload File</strong><br>
-            <input name="file" type="file" id="upload-file" this.style.backgroundColor='rgb(178,234,255)' style='width: 80%; border: 1px dotted grey'><br>
+            <input name="file" type="file" id="upload-file"><br>
         </div>
-        <div class='half' style='margin-top: 30px; height: 100px'>
+        <div>
             <strong>2. Select Who Can See Your Photos </strong><br>
             <div id='t2' style='...'>
                 <select name='group-name'>
@@ -88,26 +64,30 @@
                 </select>
             </div>
         </div>
-        <div class='half' style='margin-top: 30px; height: 100px'>
+        <div>
             <strong>Input Date (Optional)</strong><br>
             <input type="text" name="date-input" placeholder="Enter date: dd/mm/yyyy hh24:mi:ss" style='width: 80%'>
         </div>
-        <div style='margin-top: 30px; line-height: 30px'>
+        <br>
+        <div>
             <strong>Input Title (Optional)</strong><br>
             <input type="text" name="title" placeholder="Enter title here..." style='...'><br>
         </div>
-        <div style='margin-top: 30px; line-height: 30px'>
+        <br>
+        <div>
             <strong>Input Photo Taken Place (Optional)</strong><br>
             <textarea name="place" placeholder="Enter place here..." style='width: 80%; height: 100px'></textarea>
         </div>
-        <div style='margin-top: 30px; line-height: 30px'>
+        <br>
+        <div>
             <strong>5. Input Description (Optional)</strong><br>
             <textarea name="description" placeholder="Enter description here..." style='width: 80%; height: 100px'></textarea>
         </div>
+        <br>
         <span id="lblError" style="color: red;"></span>
         <input value="Upload" name="button" id="upload-button" type="submit" style='margin-bottom: 30px'/>
     </form>
-</fieldset>
+
 <!-- get audio duration -->
 <script type="text/javascript">
     function hideMessage() {
@@ -138,6 +118,7 @@
 
     document.getElementById('upload-file').addEventListener('change', checkFile, false);
     approveletter.addEventListener('change', checkFile, false);
+    
     function checkFile(e) {
         var file_list = e.target.files;
         for (var i = 0, file; file = file_list[i]; i++) {
