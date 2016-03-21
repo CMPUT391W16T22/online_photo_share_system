@@ -14,6 +14,29 @@ table, td, th {
 
 th {text-align: left;}
 </style>
+<script>
+function showUser(str) {
+    if (str == "") {
+        document.getElementById("txtHint").innerHTML = "";
+        return;
+    } else {
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("txtHint").innerHTML = xmlhttp.responseText;
+            }
+        };
+        xmlhttp.open("GET","delete_friend.php?q="+str,true);
+        xmlhttp.send();
+    }
+}
+</script>
 </head>
 <body>
 
@@ -24,8 +47,12 @@ include ("PHPconnectionDB.php");
 $conn=connect();
 #session_start();
 #$name=$_SESSION['userid'];
-
-$sql="SELECT FRIEND_ID, DATE_ADDED, NOTICE FROM GROUP_LISTS WHERE GROUP_ID = '".$q."'";
+#session_start();
+#$_SESSION['group_id']=$q;
+storeGroupId($conn,$q);
+session_start();
+$q=$_SESSION['group_id'];
+$sql="SELECT * FROM GROUP_LISTS WHERE GROUP_ID = '".$q."'";
 $result = oci_parse($conn,$sql);
 $re=oci_execute($result);
 echo "<table>
@@ -35,6 +62,8 @@ echo "<table>
 <th>Notice</th>
 </tr>";
 while ($row = oci_fetch_array($result, OCI_ASSOC)) {
+	#session_start();
+	#$_SESSION['group_id']=$row['GROUP_ID'];
     echo "<tr>";
     echo "<td>" . $row['FRIEND_ID'] . "</td>";
     echo "<td>" . $row['DATE_ADDED'] . "</td>";
@@ -44,8 +73,8 @@ while ($row = oci_fetch_array($result, OCI_ASSOC)) {
 echo "</table><br>";
 ?>
 <?php
-echo "djkahfafjkadfal";
-echo $q;
+	session_start();
+	$q=$_SESSION['group_id'];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	if (empty($_POST["username"])) {
 	     $usernameErr = "Enter username a name";
@@ -53,15 +82,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	   }else {
 	     $username = $_POST["username"];
 	 }
+	 $notice=$_POST["notice"];
+	 	$checkf=checkFriends($conn,$username);
 	    $check=checkExist($conn,$q,$username);
 	if ($check==1){
 		$usernameErr = "Friend exist in your group already! Try different username!";
-	}elseif ($check==2 and $empty !=1){
+	}elseif ($check==2 and $empty !=1 and $checkf!=2){
 		$sql="Insert into group_lists values('".$q."','".$username."',sysdate,'".$notice."')";
 		$a = oci_parse($conn, $sql);
 		$res=oci_execute($a);
 		$r = oci_commit($conn);
+		header("Refresh:0");
+	}elseif ($checkf==2) {
+		$usernameErr = "Username does not found!";
 	}
+}
+function checkFriends($conn,$username){
+	$sql = "SELECT User_name FROM USERS ";
+	$id = oci_parse($conn, $sql);
+   //Execute a statement returned from oci_parse()
+   $res=oci_execute($id); 
+   while ($row = oci_fetch_array($id, OCI_ASSOC)) {
+		foreach ($row as $item) {
+			if ($item == $username){
+					return 1;			
+			}
+		}
+   }
+   return 2;
+}
+function storeGroupId($conn,$q){
+	$sql="SELECT GROUP_ID FROM GROUPS ";
+	$result = oci_parse($conn,$sql);
+	$re=oci_execute($result); 
+    while ($row = oci_fetch_array($result, OCI_ASSOC)) {
+		foreach ($row as $item) {
+			if ($item == $q){
+					session_start();
+					$_SESSION['group_id']=$q;
+					return;			
+			}
+		}
+   }
 }
 function checkExist($conn,$goup_id,$name){
 	 //sql command
@@ -80,6 +142,15 @@ function checkExist($conn,$goup_id,$name){
    return 2;
 }
 ?>
+<form NAME="Delete group" METHOD="post" action="delete_group.php">
+<INPUT TYPE="submit" NAME="Submit" VALUE="Delete Group">
+</form>
+<form NAME="Delete friend" METHOD="post" action="delete_friend.php">
+<INPUT TYPE="submit" NAME="Submit" VALUE="Delete Friend">
+</form>
+<form NAME="Back" METHOD="post" action="edit_groups.php">
+<INPUT TYPE="submit" NAME="Submit" VALUE="Back">
+</form>
 <form NAME="LoginForm" METHOD="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 <TR VALIGN=TOP ALIGN=LEFT>
 		<H3>Enter username you want to add!</H3>
@@ -94,23 +165,6 @@ function checkExist($conn,$goup_id,$name){
 		</TR>
 		<INPUT TYPE="submit" NAME="Submit" VALUE="Add">
 </form>
-<form>
-<select name="users" onchange="showUser(this.value)">
-<option value="">Select a friend to delete:</option>
-<?php 
-include ("PHPconnectionDB.php");        
-	   //establish connection
-$conn=connect();
-$sql= "SELECT FRIEND_ID FROM GROUP_LISTS where GROUP_ID='".$q."'";
-	$id = oci_parse($conn, $sql);
-	$res=oci_execute($id); 
-	while ($row = oci_fetch_array($id, OCI_ASSOC)) {
-		echo "<option value=''>" . $row['FRIEND_ID'] . "</option>";
-			}
-?>
-</select>
-</form>
-<br>
 <div id="txtHint"><b></b></div>
 </body>
 </html>

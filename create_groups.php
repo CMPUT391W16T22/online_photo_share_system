@@ -23,26 +23,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$groupnameErr = "Group exist in your account already! Try different name!";
 	}elseif ($check==2 and $empty !=1){
 		$groupid=(int)groupID($conn)+1;
+		echo $groupid;
 		$sql="Insert into groups values('".$groupid."','".$name."','".$groupname."',sysdate)";
 		$a = oci_parse($conn, $sql);
 		$res=oci_execute($a);
 		$r = oci_commit($conn);
-		session_start();
-		$_SESSION['group_id']=$groupid;
-		$_SESSION['group_name']=$groupid;
 		header('Location: edit_groups.php');
 
 	}
 }
 function groupID($conn){
-	$sql= "SELECT COUNT(group_id) FROM groups";
+	$sql= "SELECT group_id FROM groups";
 	$id = oci_parse($conn, $sql);
 	$res=oci_execute($id); 
+	$temp=0;
 	while ($row = oci_fetch_array($id, OCI_ASSOC)) {
 		foreach ($row as $item) {
-					return $item;
+					if ($item>$temp){
+						$temp=$item;
+					}
 				}
 			}
+			return $temp;
 		}
 
 function checkExist($conn,$groupname,$name){
@@ -62,6 +64,20 @@ function checkExist($conn,$groupname,$name){
    return 2;
 }
 ?>
+<ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="edit_groups.php">Edit groups</a>
+                    </li>
+                    <li>
+                        <a href="costomer.php">Main page</a>
+                    </li>
+                    <li>
+                        <a href="index.php">Sign out</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
 <FORM NAME="Create Groups" METHOD="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"><CENTER>
 		<TABLE>
 		<TR VALIGN=TOP ALIGN=LEFT>

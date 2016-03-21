@@ -25,7 +25,22 @@ function showUser(str) {
 </script>
 </head>
 <body>
-
+<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="create_groups.php">Create new groups</a>
+                    </li>
+                    <li>
+                        <a href="costomer.php">Main page</a>
+                    </li>
+                    <li>
+                        <a href="index.php">Sign out</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
 <form>
 <select name="groups" onchange="showUser(this.value)">
 <option value="">Select a group:</option>
