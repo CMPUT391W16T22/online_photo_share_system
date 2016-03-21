@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="Di Meng" >
 
     <title>IpicShare</title>
 
@@ -52,6 +52,7 @@
                         <hr class="small">
                         <span class="subheading">Here is top 5 pictures from your friends.</span>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -75,8 +76,21 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <div class="site-heading">
                         <h1>Upload my pictures</h1>
+                        
+
                         <hr class="small">
                         <span class="subheading">Sharing your best moment with your friends!</span>
+                        
+                        
+                        <form action="upload.php" method="post" enctype="multipart/form-data">
+    								Select image to upload:
+    								<input type="file" name="fileToUpload" id="fileToUpload">
+    								<input type="submit" value="Upload Image" name="submit">
+							  </form>
+							  
+							  
+							  
+
                     </div>
                 </div>
             </div>
