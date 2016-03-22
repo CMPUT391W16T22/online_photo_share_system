@@ -38,7 +38,7 @@ function showUser(str) {
 }
 </script>
 </head>
-<body>
+<body style="background-image: url('edit-bg.jpg')">
 
 <?php
 $q = (int)intval($_GET['q']);

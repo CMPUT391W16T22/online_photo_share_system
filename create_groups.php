@@ -3,7 +3,7 @@
 <head>
 	<title>Create new friends!!!</title>
 </head>
-<body>
+<body style="background-image: url('create-bg.jpg')">
 <?php
 include ("PHPconnectionDB.php");        
 	   //establish connection

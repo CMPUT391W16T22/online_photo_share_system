@@ -15,7 +15,7 @@ table, td, th {
 th {text-align: left;}
 </style>
 </head>
-<body>
+<body style="background-image: url('create-bg.jpg')">
 
 <?php
 $q = (int)intval($_GET['q']);

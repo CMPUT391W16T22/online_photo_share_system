@@ -21,13 +21,12 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 
 </head>
-<?php
-	
-
-?>
 <body style="background-image: url('costomer-bg.jpg')">
-
             <!-- Collect the nav links, forms, and other content for toggling -->
+            <form METHOD="post" action="search.php">
+            	<INPUT TYPE="text" NAME="search_text"  style="width: 596px; height: 15px;" rows="4" cols="50" >
+            	<INPUT TYPE="submit" NAME="Submit" VALUE="Search">
+            </form>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
