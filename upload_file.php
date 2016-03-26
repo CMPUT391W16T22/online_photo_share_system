@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <?php
     include("PHPconnectionDB.php");
-    #session_start();
-    #if ( !isset ( $_SESSION['USER_NAME'] ) ) {
-       # header( "location:index.php?ERR=session" );
-   # };
-   # $user_name = $_SESSION['USER_NAME'];
-    $user_name = "Leon";
+    session_start();
+
+    $user_name = $_SESSION['userid'];
+//    $user_name = "admin";
     $conn = connect();
     $sql = "SELECT group_id, group_name FROM groups WHERE user_name='".$user_name."'";
     $sql2 = "SELECT group_id, group_name FROM groups WHERE user_name IS NULL";
@@ -33,23 +31,24 @@
 ?>
 
 <html>
-
+<head>
+  
+</head>
 <body>
 
     <legend>Files Uploading</legend>
-    <form name="upload-files" method="post" action="upload-one.php" enctype="multipart/form-data">
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <form name="upload-files" method="post" action="upload-one.php">
         <?php
 
 
-        if ($_GET['ACK']==1) echo "<div id='success-show' style='color:#0000FF'>Successful uploading. Please upload another file.</div>" ;
-        elseif ($_GET['ACK']== -1) echo "<div id='success-show' style='color:#FF0000'>Cannot your upload photo. Please try again.</div>" ;
+        if ($_GET['ACK']==1) echo "<div id='success-show' '>Successful uploading. Please upload another file.</div>" ;
+        elseif ($_GET['ACK']== -1) echo "<div id='success-show'>Cannot your upload photo. Please try again.</div>" ;
         ?>
-        <div style='margin-top: 30px; height: 100px'>
+        <div >
             <strong>1. Select Upload File</strong><br>
-            <input name="file" type="file" id="upload-file"><br>
+            <input name="file" type="file" id="upload-file" ><br>
         </div>
-        <div>
+        <div class='half'>
             <strong>2. Select Who Can See Your Photos </strong><br>
             <div id='t2' style='...'>
                 <select name='group-name'>
@@ -64,26 +63,22 @@
                 </select>
             </div>
         </div>
-        <div>
+        <div class='half' style='margin-top: 30px; height: 100px'>
             <strong>Input Date (Optional)</strong><br>
             <input type="text" name="date-input" placeholder="Enter date: dd/mm/yyyy hh24:mi:ss" style='width: 80%'>
         </div>
-        <br>
-        <div>
+        <div style='margin-top: 30px; line-height: 30px'>
             <strong>Input Title (Optional)</strong><br>
             <input type="text" name="title" placeholder="Enter title here..." style='...'><br>
         </div>
-        <br>
-        <div>
+        <div style='margin-top: 30px; line-height: 30px'>
             <strong>Input Photo Taken Place (Optional)</strong><br>
             <textarea name="place" placeholder="Enter place here..." style='width: 80%; height: 100px'></textarea>
         </div>
-        <br>
-        <div>
+        <div style='margin-top: 30px; line-height: 30px'>
             <strong>5. Input Description (Optional)</strong><br>
             <textarea name="description" placeholder="Enter description here..." style='width: 80%; height: 100px'></textarea>
         </div>
-        <br>
         <span id="lblError" style="color: red;"></span>
         <input value="Upload" name="button" id="upload-button" type="submit" style='margin-bottom: 30px'/>
     </form>
@@ -118,7 +113,6 @@
 
     document.getElementById('upload-file').addEventListener('change', checkFile, false);
     approveletter.addEventListener('change', checkFile, false);
-    
     function checkFile(e) {
         var file_list = e.target.files;
         for (var i = 0, file; file = file_list[i]; i++) {

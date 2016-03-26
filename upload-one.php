@@ -37,7 +37,7 @@
     $all_object_id = array();
     while ($object_id = oci_fetch_array($id_stid, OCI_ASSOC)) {
             array_push($all_object_id, $object_id["PHOTO_ID"]);
-    }file:///cshome/dmeng/Downloads/upload_file.php
+    }
     $id_guess = 1;
     while (true) {
         if (in_array($id_guess, $all_object_id)) {
@@ -46,6 +46,7 @@
             break;
         };
     }
+    session_start();
     $fileName = $_FILES["file"]["name"];
     $fileTmpLoc = $_FILES["file"]["tmp_name"];
     $moveResult = move_uploaded_file($fileTmpLoc, "/tmp/" . $fileName);
@@ -58,9 +59,7 @@
     img_resize($target_file, $resized_file, $wmax, $hmax);
     $thumb_img = file_get_contents($resized_file);
     $owner_name = $_SESSION['userid'];
-    #$owner_name = "Leon";
-    $permitted_id = $_SESSION['group_id'];
-    #$permitted_id = 6;
+    $permitted_id = $_POST['group-name'];
     $subject = $_POST['title'];
     if($subject == ''){
         $subject = $_FILES["file"]['name'];
