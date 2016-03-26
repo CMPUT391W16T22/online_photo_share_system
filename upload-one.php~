@@ -57,10 +57,10 @@
     $fileExt = end($ext_arr);
     img_resize($target_file, $resized_file, $wmax, $hmax);
     $thumb_img = file_get_contents($resized_file);
-    $owner_name = $_SESSION['userid'];
-    #$owner_name = "Leon";
-    $permitted_id = $_SESSION['group_id'];
-    #$permitted_id = 6;
+    $owner_name = $_SESSION['USER_NAME'];
+    $owner_name = "Leon";
+    $permitted_id = $_POST['group-name'];
+   # $permitted_id = 6;
     $subject = $_POST['title'];
     if($subject == ''){
         $subject = $_FILES["file"]['name'];
