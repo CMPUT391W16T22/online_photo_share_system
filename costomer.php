@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
 	 <meta charset="utf-8">
@@ -82,10 +81,40 @@ $(function() {
             	<p>From: <input type="text" NAME="from_date" id="datepicker"> To: <input type="text" NAME="to_date" id="datepicker1"></p>
 				<span class="error"><?php echo $dateErr;?></span>
 				<span class="error"><?php echo $searchErr;?></span>
+
+            <form METHOD="post" action="search.php">
+            	<input TYPE="text" NAME="search_text"  style="width: 596px; height: 15px;" rows="4" cols="50" >
+            	<input TYPE="submit" NAME="Submit" VALUE="Search">
             </form>
             </td>
 			</tr>
 			</table>
+			<form mathod="post">
+				<p>From: <input type="text" NAME="from_date" id="datepicker"> To: <input type="text" NAME="to_date" id="datepicker1"></p>
+			</form>
+			<?php
+				if ($_SERVER["REQUEST_METHOD"] == "POST") {
+					
+					if (empty($_POST["groupname"])) {
+					     $groupnameErr = "Enter group a name";
+					     $empty=1;
+					   }else {
+					     $groupname = $_POST["groupname"];
+					 }
+					    $check=checkExist($conn,$groupname,$name);
+					if ($check==1){
+						$groupnameErr = "Group exist in your account already! Try different name!";
+					}elseif ($check==2 and $empty !=1){
+						$groupid=(int)groupID($conn)+1;
+						echo $groupid;
+						$sql="Insert into groups values('".$groupid."','".$name."','".$groupname."',sysdate)";
+						$a = oci_parse($conn, $sql);
+						$res=oci_execute($a);
+						$r = oci_commit($conn);
+						header('Location: edit_groups.php');
+
+					}}
+			?>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -124,7 +153,12 @@ $(function() {
                     <div class="site-heading">
                         <h1>Friends' moment</h1>
                         <hr class="small">
-                        <span class="subheading">Check out your frineds did rencently!</span>
+                        <span class="subheading">Check out your frineds did rencently!</span><br/>
+                        
+                        <?php
+								$id = 2;                        
+                         echo "<img src='1.php?id=$id' width='128' height='128'>";  ?>
+                        
                     </div>
                 </div>
             </div>
@@ -146,16 +180,12 @@ $(function() {
     								<form NAME="upload" METHOD="post" action="upload_file.php">">
 
 										<input type="submit" value="Open Form">
-									</form>
-							  
-							  
-							  
-							  
+									</form>							  
 
                     </div>
                 </div>
             </div>
         </div>
     </header>
-</body >
+</body>
 </html>
