@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	 <meta charset="utf-8">
@@ -81,40 +82,10 @@ $(function() {
             	<p>From: <input type="text" NAME="from_date" id="datepicker"> To: <input type="text" NAME="to_date" id="datepicker1"></p>
 				<span class="error"><?php echo $dateErr;?></span>
 				<span class="error"><?php echo $searchErr;?></span>
-
-            <form METHOD="post" action="search.php">
-            	<input TYPE="text" NAME="search_text"  style="width: 596px; height: 15px;" rows="4" cols="50" >
-            	<input TYPE="submit" NAME="Submit" VALUE="Search">
             </form>
             </td>
 			</tr>
 			</table>
-			<form mathod="post">
-				<p>From: <input type="text" NAME="from_date" id="datepicker"> To: <input type="text" NAME="to_date" id="datepicker1"></p>
-			</form>
-			<?php
-				if ($_SERVER["REQUEST_METHOD"] == "POST") {
-					
-					if (empty($_POST["groupname"])) {
-					     $groupnameErr = "Enter group a name";
-					     $empty=1;
-					   }else {
-					     $groupname = $_POST["groupname"];
-					 }
-					    $check=checkExist($conn,$groupname,$name);
-					if ($check==1){
-						$groupnameErr = "Group exist in your account already! Try different name!";
-					}elseif ($check==2 and $empty !=1){
-						$groupid=(int)groupID($conn)+1;
-						echo $groupid;
-						$sql="Insert into groups values('".$groupid."','".$name."','".$groupname."',sysdate)";
-						$a = oci_parse($conn, $sql);
-						$res=oci_execute($a);
-						$r = oci_commit($conn);
-						header('Location: edit_groups.php');
-
-					}}
-			?>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -153,8 +124,9 @@ $(function() {
                     <div class="site-heading">
                         <h1>Friends' moment</h1>
                         <hr class="small">
-                        <span class="subheading">Check out your frineds did rencently!</span><br/>
+                        <span class="subheading">Check out your frineds did rencently!</span>
                         
+									
                                            <?php
                         
 	include("PHPconnectionDB.php");
@@ -162,36 +134,49 @@ $(function() {
     $user_name = $_SESSION['userid'];
 //    $user_name = "admin";
     $conn = connect();
-    $sql = "SELECT group_id FROM groups WHERE user_name='".$user_name."'";
-    $sql2 = "SELECT group_id FROM groups WHERE user_name IS NULL";
 
-    $stid = oci_parse( $conn, $sql );
-    $stid2 = oci_parse( $conn, $sql2);
-    $result = oci_execute( $stid );
-    $result2 = oci_execute( $stid2 );
-    if (!($result2 && $result)){
-        header( "location:index.php?ERR=err" );
-    }
 
-    $all_group_info = array();
+function createView($conn,$name){
+	$sql="CREATE VIEW DISPLAY_VIEW_".$name." (PHOTO_ID, SUBJECT,PLACE, DESCRIPTION,TIMING)
+		AS SELECT *
+		FROM(
+		SELECT i1.PHOTO_ID,i1.SUBJECT,i1.PLACE, i1.DESCRIPTION,i1.TIMING
+		FROM IMAGES i1
+		where i1.permitted=1
+		UNION
+		SELECT i2.PHOTO_ID,i2.SUBJECT,i2.PLACE, i2.DESCRIPTION,i2.TIMING
+		FROM IMAGES i2
+		where i2.OWNER_NAME='".$name."'
+		UNION
+		SELECT i3.PHOTO_ID,i3.SUBJECT,i3.PLACE, i3.DESCRIPTION,i3.TIMING
+		FROM IMAGES i3, GROUP_LISTS gl
+		where i3.permitted=gl.GROUP_ID
+		AND gl.friend_id='".$name."')";
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);
+	$r = oci_commit($conn);	
+}
+createView($conn,$user_name);
+$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
+$a = oci_parse($conn, $sql);
+$res=oci_execute($a);
 
-    while ($group = oci_fetch_row($stid2)){
-        array_push($all_group_info, $group);
-    }
-    while ($group = oci_fetch_row($stid)){
-        array_push($all_group_info, $group);
-    }
-                          
-    print_r($all_group_info);     
-    echo "<br>";              
+while (($row = oci_fetch_array($a, OCI_BOTH))) {
+	echo $row[0];
+	 $id =$row[0];
+	 echo "<img src='1.php?id=$id' width='128' height='128'>";
+
+}
+
                         
  
-                       
-								$id = 2;                        
-                         echo "<img src='1.php?id=$id' width='128' height='128'>
-										                         
-                         
-                         "; ?>
+                        ?>
+                                                
+                        
+                        
+                        
+                        
+                        
                         
                     </div>
                 </div>
@@ -214,12 +199,16 @@ $(function() {
     								<form NAME="upload" METHOD="post" action="upload_file.php">">
 
 										<input type="submit" value="Open Form">
-									</form>							  
+									</form>
+							  
+							  
+							  
+							  
 
                     </div>
                 </div>
             </div>
         </div>
     </header>
-</body>
+</body >
 </html>
