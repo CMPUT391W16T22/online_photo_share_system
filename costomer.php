@@ -124,7 +124,7 @@ $(function() {
                     <div class="site-heading">
                         <h1>Friends' moment</h1>
                         <hr class="small">
-                        <span class="subheading">Check out your frineds did rencently!</span>
+                        <span class="subheading">Check out your frineds did rencently!<br></span>
                         
 									
                                            <?php
@@ -156,28 +156,52 @@ function createView($conn,$name){
 	$res=oci_execute($a);
 	$r = oci_commit($conn);	
 }
+
+function dropViewExist($conn,$name){
+	$sql = "select view_name from user_views";
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);
+	
+	$vname = "display_view_$name";
+	$vname = strtoupper($vname);
+	
+   while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+	   	
+		foreach ($row as $item) {
+			
+			if ($item == $vname){
+				
+				$sql2 = "drop view $vname";	
+				$aa = oci_parse($conn, $sql2);
+				$res=oci_execute($aa);	
+				$r = oci_commit($conn);		
+			}
+	   }
+	   
+	}
+	}
+
+
+
+dropViewExist($conn,$user_name);
 createView($conn,$user_name);
 $sql = "select photo_id from DISPLAY_VIEW_".$user_name;
 $a = oci_parse($conn, $sql);
 $res=oci_execute($a);
 
 while (($row = oci_fetch_array($a, OCI_BOTH))) {
-	echo $row[0];
+	#echo $row[0];
 	 $id =$row[0];
-	 echo "<img src='1.php?id=$id' width='128' height='128'>";
-
+	 session_start();
+    echo $id;
+	 #echo $_SESSION['pid'];
+	 echo "<a href='friendImage.php?pid=".$id."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";
+	 
+			 
+	
 }
-
-                        
- 
-                        ?>
-                                                
-                        
-                        
-                        
-                        
-                        
-                        
+ ?>
+             
                     </div>
                 </div>
             </div>
@@ -200,9 +224,6 @@ while (($row = oci_fetch_array($a, OCI_BOTH))) {
 
 										<input type="submit" value="Open Form">
 									</form>
-							  
-							  
-							  
 							  
 
                     </div>
