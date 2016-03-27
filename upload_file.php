@@ -39,6 +39,8 @@
     <legend>Files Uploading</legend>
     <form name="upload-files" method="post" action="upload-one.php">
         <?php
+
+
         if ($_GET['ACK']==1) echo "<div id='success-show' '>Successful uploading. Please upload another file.</div>" ;
         elseif ($_GET['ACK']== -1) echo "<div id='success-show'>Cannot your upload photo. Please try again.</div>" ;
         ?>

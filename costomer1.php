@@ -189,7 +189,7 @@ function createView($conn,$name){
 $sql = "select photo_id from DISPLAY_VIEW_".$user_name;
 $a = oci_parse($conn, $sql);
 $res=oci_execute($a);
-$r = oci_commit($conn);	
+
                         
  
                        
