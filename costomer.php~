@@ -54,7 +54,8 @@ $(function() {
 							$dateErr="From date must be less than To date reselect again!!!";
 						}else{
 							session_start();
-            				$_SESSION['from_date']=$from_date;
+            				$_SESSION['from_date']=$from_date;uc05[~]:sqldeveloper.sh 
+
             				$_SESSION['to_date']=$to_date;
  							$_SESSION['search_text']=$search_text;
 							header('Location: search.php');
@@ -155,9 +156,48 @@ $(function() {
                         <hr class="small">
                         <span class="subheading">Check out your frineds did rencently!</span><br/>
                         
-                        <?php
+                                           <?php
+                        
+	include("PHPconnectionDB.php");
+    session_start();
+    $user_name = $_SESSION['userid'];
+//    $user_name = "admin";
+    $conn = connect();
+
+
+function createView($conn,$name){
+	$sql="CREATE VIEW DISPLAY_VIEW_".$name." (PHOTO_ID, SUBJECT,PLACE, DESCRIPTION,TIMING)
+		AS SELECT *
+		FROM(
+		SELECT i1.PHOTO_ID,i1.SUBJECT,i1.PLACE, i1.DESCRIPTION,i1.TIMING
+		FROM IMAGES i1
+		where i1.permitted=1
+		UNION
+		SELECT i2.PHOTO_ID,i2.SUBJECT,i2.PLACE, i2.DESCRIPTION,i2.TIMING
+		FROM IMAGES i2
+		where i2.OWNER_NAME='".$name."'
+		UNION
+		SELECT i3.PHOTO_ID,i3.SUBJECT,i3.PLACE, i3.DESCRIPTION,i3.TIMING
+		FROM IMAGES i3, GROUP_LISTS gl
+		where i3.permitted=gl.GROUP_ID
+		AND gl.friend_id='".$name."')";
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);
+	$r = oci_commit($conn);	
+}
+
+$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
+$a = oci_parse($conn, $sql);
+$res=oci_execute($a);
+$r = oci_commit($conn);	
+                        
+ 
+                       
 								$id = 2;                        
-                         echo "<img src='1.php?id=$id' width='128' height='128'>";  ?>
+                         echo "<img src='1.php?id=$id' width='128' height='128'>
+										                         
+                         
+                         "; ?>
                         
                     </div>
                 </div>

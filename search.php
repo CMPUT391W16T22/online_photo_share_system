@@ -17,7 +17,7 @@ createView($conn,$name);
 if ($checkand==false and $checkor==false and $checkspace==false){
 	#single word with no date
 	if ($to_date=="" and $from_date==$to_date){
-		singleWordSearch($conn,$search_text);
+		singleWordSearch($conn,$name,$search_text);
 	#single word with date
 	}else{
 
@@ -60,7 +60,7 @@ if ($checkand==false and $checkor==false and $checkspace==false){
 	}
 }
 function createView($conn,$name){
-	$sql="CREATE VIEW SEARCH_VIEW (PHOTO_ID, SUBJECT,PLACE, DESCRIPTION,TIMING)
+	$sql="CREATE VIEW SEARCH_VIEW_".$name." (PHOTO_ID, SUBJECT,PLACE, DESCRIPTION,TIMING)
 		AS SELECT *
 		FROM(
 		SELECT i1.PHOTO_ID,i1.SUBJECT,i1.PLACE, i1.DESCRIPTION,i1.TIMING
@@ -78,21 +78,10 @@ function createView($conn,$name){
 	$a = oci_parse($conn, $sql);
 	$res=oci_execute($a);
 	$r = oci_commit($conn);
-	#$sql1="SELECT * FROM SEARCH_VIEW";
-	#$a = oci_parse($conn, $sql1);
-	#$res=oci_execute($a);
-	#while ($row = oci_fetch_array($a, OCI_ASSOC)) {
-	#	    echo "<tr>";
-	#	    echo "<td>" . $row['PHOTO_ID'] . "</td>";
-	#	    echo "<td>" . $row['SUBJECT'] . "</td>";
-	#	    echo "<td>" . $row['PLACE'] . "</td>";
-	#	    echo "<td>" . $row['DESCRIPTION'] . "</td>";
-	#	    echo "<td>" . $row['TIMING'] . "</td>";
-	#	    echo "</tr>";
-	#}
+	
 }
-function singleWordSearch($conn,$search_text){
-$sql="SELECT DISTINCT photo_id  FROM SEARCH_VIEW WHERE subject LIKE '%".$search_text."%' OR place LIKE '%".$search_text."%'OR Description LIKE '%".$search_text."%'";
+function singleWordSearch($conn,$name,$search_text){
+$sql="SELECT DISTINCT photo_id  FROM SEARCH_VIEW_".$name." WHERE subject LIKE '%".$search_text."%' OR place LIKE '%".$search_text."%'OR Description LIKE '%".$search_text."%'";
 $a = oci_parse($conn, $sql);
 $res=oci_execute($a);
 while ($row = oci_fetch_array($a, OCI_ASSOC)) {

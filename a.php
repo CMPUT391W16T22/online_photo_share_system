@@ -1,10 +1,6 @@
 <html>
 <body>
-	<?php 
-	echo '<img src = "1.php"/>';
-	?>
-	<h1>sadfsa</h1>
+	
+	<img src="1.php?id=1" />
 </body>
-
-
-</html>>
+</html>
