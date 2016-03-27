@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
 	 <meta charset="utf-8">
@@ -39,8 +38,8 @@ $(function() {
 			<tr>
 			<td>
             <form METHOD="post" action="search.php">
-            	<INPUT TYPE="text" NAME="search_text"  style="width: 596px; height: 15px;" rows="4" cols="50" >
-            	<INPUT TYPE="submit" NAME="Submit" VALUE="Search">
+            	<input TYPE="text" NAME="search_text"  style="width: 596px; height: 15px;" rows="4" cols="50" >
+            	<input TYPE="submit" NAME="Submit" VALUE="Search">
             </form>
             </td>
 			</tr>
@@ -69,7 +68,7 @@ $(function() {
 						$r = oci_commit($conn);
 						header('Location: edit_groups.php');
 
-					}
+					}}
 			?>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
@@ -109,7 +108,12 @@ $(function() {
                     <div class="site-heading">
                         <h1>Friends' moment</h1>
                         <hr class="small">
-                        <span class="subheading">Check out your frineds did rencently!</span>
+                        <span class="subheading">Check out your frineds did rencently!</span><br/>
+                        
+                        <?php
+								$id = 2;                        
+                         echo "<img src='1.php?id=$id' width='128' height='128'>";  ?>
+                        
                     </div>
                 </div>
             </div>
@@ -131,16 +135,12 @@ $(function() {
     								<form NAME="upload" METHOD="post" action="upload_file.php">">
 
 										<input type="submit" value="Open Form">
-									</form>
-							  
-							  
-							  
-							  
+									</form>							  
 
                     </div>
                 </div>
             </div>
         </div>
     </header>
-</body >
+</body>
 </html>
