@@ -155,9 +155,43 @@ $(function() {
                         <hr class="small">
                         <span class="subheading">Check out your frineds did rencently!</span><br/>
                         
-                        <?php
+                                           <?php
+                        
+	include("PHPconnectionDB.php");
+    session_start();
+    $user_name = $_SESSION['userid'];
+//    $user_name = "admin";
+    $conn = connect();
+    $sql = "SELECT group_id FROM groups WHERE user_name='".$user_name."'";
+    $sql2 = "SELECT group_id FROM groups WHERE user_name IS NULL";
+
+    $stid = oci_parse( $conn, $sql );
+    $stid2 = oci_parse( $conn, $sql2);
+    $result = oci_execute( $stid );
+    $result2 = oci_execute( $stid2 );
+    if (!($result2 && $result)){
+        header( "location:index.php?ERR=err" );
+    }
+
+    $all_group_info = array();
+
+    while ($group = oci_fetch_row($stid2)){
+        array_push($all_group_info, $group);
+    }
+    while ($group = oci_fetch_row($stid)){
+        array_push($all_group_info, $group);
+    }
+                          
+    print_r($all_group_info);     
+    echo "<br>";              
+                        
+ 
+                       
 								$id = 2;                        
-                         echo "<img src='1.php?id=$id' width='128' height='128'>";  ?>
+                         echo "<img src='1.php?id=$id' width='128' height='128'>
+										                         
+                         
+                         "; ?>
                         
                     </div>
                 </div>

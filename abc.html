@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Test Dialog</title>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="path_to_jq_ui"></script>
+
+</head>
+<body>
+  <p><a href="javascript:void(null);" onclick="showDialog('Lorem ipsum dolor');">Open</a></p>
+
+  <div id="dialog-modal" title="Basic modal dialog" style="display: none;"></div>
+
+  <script type="text/javascript">
+    function showDialog(text)
+    {
+      $("#dialog-modal").html(text)
+      $("#dialog-modal").dialog(
+      {
+        width: 600,
+        height: 400,
+        open: function(event, ui)
+        {
+          var textarea = $('<textarea style="height: 276px;">');
+          $(textarea).redactor({
+              focus: true,
+              autoresize: false,
+              initCallback: function()
+              {
+                  this.set('<p>Lorem...</p>');
+              }
+          });
+        }
+      });
+    }
