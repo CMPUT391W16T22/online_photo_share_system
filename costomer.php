@@ -35,42 +35,57 @@ $(function() {
 </head>
 <body style="background-image: url('costomer-bg.jpg')">
             <!-- Collect the nav links, forms, and other content for toggling -->
+            <?php
+				if ($_SERVER["REQUEST_METHOD"] == "POST") {
+					if (empty($_POST["search_text"])){
+						$searchErr="You must enter key words you want to search!";
+					}else{
+						$search_text=$_POST["search_text"];
+					}
+					if (!empty($_POST["from_date"]) and empty($_POST["to_date"])){
+						$dateErr="Invalid To date! You MUST SELECT BOTH from date and to date";
+					}elseif (empty($_POST["from_date"]) and !empty($_POST["to_date"])) {
+						$dateErr="Invalid From date! You MUST SELECT BOTH from date and to date";
+					}
+					
+					if (!empty($_POST["from_date"]) and !empty($_POST["to_date"]) ) {
+						$from_date=date("m/d/Y", strtotime($_POST["from_date"]));
+						$to_date=date("m/d/Y", strtotime($_POST["to_date"]));
+						if (strtotime($from_date)>strtotime($to_date)){
+							$dateErr="From date must be less than To date reselect again!!!";
+						}else{
+							session_start();
+            				$_SESSION['from_date']=$from_date;
+            				$_SESSION['to_date']=$to_date;
+ 							$_SESSION['search_text']=$search_text;
+							header('Location: search.php');
+						}
+					}
+					if (empty($_POST["from_date"]) and empty($_POST["to_date"]) and !empty($_POST["search_text"])) {
+						$from_date="";
+						$to_date="";
+						session_start();
+						$_SESSION['from_date']=$from_date;
+            			$_SESSION['to_date']=$to_date;
+ 						$_SESSION['search_text']=$search_text;
+						header('Location: search.php');
+					}
+			}
+			?>
             <table>
 			<tr>
 			<td>
-            <form METHOD="post" action="search.php">
+            <form METHOD="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             	<INPUT TYPE="text" NAME="search_text"  style="width: 596px; height: 15px;" rows="4" cols="50" >
             	<INPUT TYPE="submit" NAME="Submit" VALUE="Search">
+            	<br>
+            	<p>From: <input type="text" NAME="from_date" id="datepicker"> To: <input type="text" NAME="to_date" id="datepicker1"></p>
+				<span class="error"><?php echo $dateErr;?></span>
+				<span class="error"><?php echo $searchErr;?></span>
             </form>
             </td>
 			</tr>
 			</table>
-			<form mathod="post">
-				<p>From: <input type="text" NAME="from_date" id="datepicker"> To: <input type="text" NAME="to_date" id="datepicker1"></p>
-			</form>
-			<?php
-				if ($_SERVER["REQUEST_METHOD"] == "POST") {
-					
-					if (empty($_POST["groupname"])) {
-					     $groupnameErr = "Enter group a name";
-					     $empty=1;
-					   }else {
-					     $groupname = $_POST["groupname"];
-					 }
-					    $check=checkExist($conn,$groupname,$name);
-					if ($check==1){
-						$groupnameErr = "Group exist in your account already! Try different name!";
-					}elseif ($check==2 and $empty !=1){
-						$groupid=(int)groupID($conn)+1;
-						echo $groupid;
-						$sql="Insert into groups values('".$groupid."','".$name."','".$groupname."',sysdate)";
-						$a = oci_parse($conn, $sql);
-						$res=oci_execute($a);
-						$r = oci_commit($conn);
-						header('Location: edit_groups.php');
-
-					}
-			?>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
