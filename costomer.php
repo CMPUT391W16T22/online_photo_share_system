@@ -127,11 +127,12 @@ $(function() {
                         <span class="subheading">Check out your frineds did rencently!<br></span>
                         
 									
-                                           <?php
+<?php
                         
 	include("PHPconnectionDB.php");
     session_start();
     $user_name = $_SESSION['userid'];
+    
 //    $user_name = "admin";
     $conn = connect();
 
@@ -193,10 +194,11 @@ while (($row = oci_fetch_array($a, OCI_BOTH))) {
 	#echo $row[0];
 	 $id =$row[0];
 	 session_start();
+
     echo $id;
 	 #echo $_SESSION['pid'];
-	 echo "<a href='friendImage.php?pid=".$id."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";
-	 
+	 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";
+	
 			 
 	
 }
