@@ -2,8 +2,18 @@
 include ("PHPconnectionDB.php");
 $conn=connect(); 
 session_start();
-$from_date=date("d-M-Y",strtotime($_SESSION['from_date']));
-$to_date=date("d-M-Y",strtotime($_SESSION['to_date']));
+if (!empty($_SESSION['from_date']) and !empty($_SESSION['to_date'])){
+	$from_date=date("d-M-Y",strtotime($_SESSION['from_date']));
+	$to_date=date("d-M-Y",strtotime($_SESSION['to_date']));
+}elseif (empty($_SESSION['from_date']) and !empty($_SESSION['to_date'])) {
+	session_start();
+	$from_date="";
+	$to_date=date("d-M-Y",strtotime($_SESSION['to_date']));
+}elseif (!empty($_SESSION['from_date']) and empty($_SESSION['to_date'])) {
+	session_start();
+	$from_date=date("d-M-Y",strtotime($_SESSION['from_date']));
+	$to_date="";
+}
 $search_text=$_SESSION['search_text'];
 $name=$_SESSION['userid'];
 $checkspace=strpos($search_text," ");
@@ -12,51 +22,61 @@ $checkor = strpos($search_text,"or");
 dropTableExist($conn,$name);
 createSearchView($conn,$name);
 $settime="";
-#this condition is single word
-if ($checkand==false and $checkor==false and $checkspace==false){
+if ($search_text==""){
+	timeSearch($conn,$name,$settime);
+}elseif ($checkand==false and $checkor==false and $checkspace==false){
 	#single word with no date
-	if ($from_date==$to_date){
+	if (empty($from_date) and empty($to_date)){
 		singleWordSearch($conn,$search_text,$name,$settime);
 	#single word with date
 	}else{
-		$settime="AND (TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."'))";
+		$settime=checkTime($from_date,$to_date);
 		singleWordSearch($conn,$search_text,$name,$settime);
 	}
 	#space between words
 }elseif ($checkand==false and $checkor==false and $checkspace==true) {
 	$word = explode(" ", $search_text);
 	#two more words with no date 
-	if ($from_date==$to_date){
+	if (empty($from_date) and empty($to_date)){
 		spaceSearch($conn,$word,$name,$settime);
 	}else{
-		$settime="AND (TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."'))";
+		$settime=checkTime($from_date,$to_date);
 		spaceSearch($conn,$word,$name,$settime);
 	}
 	#contain "and" in search_text
 }elseif ($checkand==true and $checkor==false) {
 	$word = explode(" and ", $search_text);
-	if ($from_date==$to_date){
+	if (empty($from_date) and empty($to_date)){
 		#contain "and" in search_text with no date
 		andWordSearch($conn,$word,$name,$settime);
 	}else{
-		$settime="AND (TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."'))";
+		$settime=checkTime($from_date,$to_date);
 		andWordSearch($conn,$word,$name,$settime);
 	}
 	#contain "or" in search_text
 }elseif ($checkand==false and $checkor==true) {
 	$word = explode(" or ", $search_text);
-	if ($from_date==$to_date){
+	if (empty($from_date) and empty($to_date)){
 		orWordSearch($conn,$word,$name,$settime);
 	}else{
 		##contain "or" in search_text with date
-		$settime="AND (TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."'))";
+		$settime=checkTime($from_date,$to_date);
 		orWordSearch($conn,$word,$name,$settime);
 	}
 
 }
 header('Location: search1.php');
 						
-
+function checkTime($from_date,$to_date){
+	if (!empty($from_date) and !empty($to_date)){
+		$settime="AND (TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."'))";
+	}elseif (!empty($from_date) and empty($to_date)) {
+		$settime="AND (TIMING >to_date('".$from_date."'))";
+	}elseif (!empty($from_date) and empty($to_date)) {
+		$settime="AND (TIMING< to_date('".$to_date."'))";
+	}
+	return $settime;
+}
 function createSearchView($conn,$name){
 	$sql="CREATE TABLE SEARCH_".$name." (
 		PHOTO_ID INT,
@@ -65,6 +85,27 @@ function createSearchView($conn,$name){
 	$a = oci_parse($conn, $sql);
 	$res=oci_execute($a);
 	$r = oci_commit($conn);
+}
+function timeSearch($conn,$name,$settime){
+	if (!empty($from_date) and !empty($to_date)){
+		$settime="TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."')";
+	}elseif (!empty($from_date) and empty($to_date)) {
+		$settime="TIMING >to_date('".$from_date."')";
+	}elseif (!empty($from_date) and empty($to_date)) {
+		$settime="TIMING< to_date('".$to_date."')";
+	}
+	$sql="SELECT *  FROM DISPLAY_VIEW_".$name." WHERE ".$settime."";
+	echo $sql;
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);	
+	while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+		$check_rank=calculateRank($row['SUBJECT'],$row['PLACE'] ,$row['DESCRIPTION'] ,$search_text);
+		$q="INSERT INTO SEARCH_".$name." VALUES('". $row['PHOTO_ID'] ."', '". $row['TIMING'] ."', '".$check_rank."')"; 
+		$b = oci_parse($conn, $q);
+		$res=oci_execute($b);
+	}
+	$r = oci_commit($conn);
+		
 }
 function singleWordSearch($conn,$search_text,$name,$settime){
 	$sql="SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$search_text."%' OR place LIKE '%".$search_text."%'OR Description LIKE '%".$search_text."%')".$settime."";

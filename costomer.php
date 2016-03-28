@@ -37,15 +37,27 @@ $(function() {
             <!-- Collect the nav links, forms, and other content for toggling -->
             <?php
 				if ($_SERVER["REQUEST_METHOD"] == "POST") {
-					if (empty($_POST["search_text"])){
-						$searchErr="You must enter key words you want to search!";
+					if (empty($_POST["search_text"]) and empty($_POST["from_date"]) and empty($_POST["to_date"])){
+						$searchErr="You must enter key words or dates you want to search!";
 					}else{
 						$search_text=$_POST["search_text"];
 					}
 					if (!empty($_POST["from_date"]) and empty($_POST["to_date"])){
-						$dateErr="Invalid To date! You MUST SELECT BOTH from date and to date";
+						$from_date=date("m/d/Y", strtotime($_POST["from_date"]));
+						$to_date="";
+						session_start();
+        				$_SESSION['from_date']=$from_date;
+        				$_SESSION['to_date']=$to_date;
+						$_SESSION['search_text']=$search_text;
+						header('Location: search.php');
 					}elseif (empty($_POST["from_date"]) and !empty($_POST["to_date"])) {
-						$dateErr="Invalid From date! You MUST SELECT BOTH from date and to date";
+						$from_date="";
+						$to_date=date("m/d/Y", strtotime($_POST["to_date"]));
+						session_start();
+        				$_SESSION['from_date']=$from_date;
+        				$_SESSION['to_date']=$to_date;
+						$_SESSION['search_text']=$search_text;
+						header('Location: search.php');
 					}
 					
 					if (!empty($_POST["from_date"]) and !empty($_POST["to_date"]) ) {
