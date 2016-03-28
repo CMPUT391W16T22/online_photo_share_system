@@ -68,3 +68,13 @@ CREATE TABLE images (
    FOREIGN KEY(owner_name) REFERENCES users,
    FOREIGN KEY(permitted) REFERENCES groups
 );
+
+
+
+CREATE TABLE imagecont (
+   photo_id    int,
+   owner_name  varchar(24),
+   PRIMARY KEY(photo_id,owner_name),
+   FOREIGN KEY(owner_name) REFERENCES users on delete cascade,
+   FOREIGN KEY(photo_id) REFERENCES images on delete cascade
+);
