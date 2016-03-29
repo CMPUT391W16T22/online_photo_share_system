@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script>
 function showUser(str) {
     if (str == "") {
@@ -23,24 +24,42 @@ function showUser(str) {
     }
 }
 </script>
+<style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #99ccff;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #111;
+}
+</style>
 </head>
 <body style="background-image: url('edit-bg.jpg')">
-<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="create_groups.php">Create new groups</a>
-                    </li>
-                    <li>
-                        <a href="costomer.php">Main page</a>
-                    </li>
-                    <li>
-                        <a href="index.php">Sign out</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
+<ul>
+  <li><a class="active" href="costomer.php">Home</a></li>
+  <li><a href="myphoto.php">My Photo</a></li>
+  <li><a href="upload_file.php">Upload Photo</a></li>
+  <li><a href="create_groups.php">Create new groups</a></li>
+  <li><a href="edit_groups.php">Editing existing groups</a></li>
+  <li><a href="index.php">Sign out</a></li>	
+  <div style="float:right;" ><i class="material-icons">account_circle</i><br><?php session_start(); echo $_SESSION['userid']?></div>		 
+</ul>
 <form>
 <select name="groups" onchange="showUser(this.value)">
 <option value="">Select a group:</option>

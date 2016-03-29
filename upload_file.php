@@ -32,10 +32,44 @@
 
 <html>
 <head>
-  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
-<body>
+<style>
+form {display: inline-block;}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #99ff99;
+}
 
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #ffffff;
+}
+</style>
+<body>
+<ul>
+  <li><a class="active" href="costomer.php">Home</a></li>
+  <li><a href="myphoto.php">My Photo</a></li>
+  <li><a href="upload_file.php">Upload Photo</a></li>
+  <li><a href="create_groups.php">Create new groups</a></li>
+  <li><a href="edit_groups.php">Editing existing groups</a></li>
+  <li><a href="index.php">Sign out</a></li>	
+  <div style="float:right;" ><i class="material-icons">account_circle</i><br><?php session_start(); echo $_SESSION['userid']?></div>		 
+</ul>
     <legend>Files Uploading</legend>
     <form name="upload-files" method="post" action="upload-one.php">
         <?php

@@ -19,12 +19,36 @@
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <link rel="stylesheet" href="/resources/demos/style.css">
 <style>
 form {display: inline-block;}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ffff00;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #ffffff;
+}
 </style>
 <script>
 $(function() {
@@ -35,6 +59,15 @@ $(function() {
 </head>
 <body style="background-image: url('costomer-bg.jpg')">
             <!-- Collect the nav links, forms, and other content for toggling -->
+            <ul>
+			  <li><a class="active" href="#home">Home</a></li>
+			  <li><a href="myphoto.php">My Photo</a></li>
+			  <li><a href="upload_file.php">Upload Photo</a></li>
+			  <li><a href="create_groups.php">Create new groups</a></li>
+			  <li><a href="edit_groups.php">Editing existing groups</a></li>
+			  <li><a href="index.php">Sign out</a></li>	
+			  <div style="float:right;" ><i class="material-icons">account_circle</i><br><?php session_start(); echo $_SESSION['userid']?></div>		 
+			</ul>
             <?php
 				if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					if (empty($_POST["search_text"]) and empty($_POST["from_date"]) and empty($_POST["to_date"])){
@@ -84,6 +117,7 @@ $(function() {
 					}
 			}
 			?>
+
             <table>
 			<tr>
 			<td>
@@ -98,19 +132,6 @@ $(function() {
             </td>
 			</tr>
 			</table>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="create_groups.php">Create new groups</a>
-                    </li>
-                    <li>
-                        <a href="edit_groups.php">Editing existing groups</a>
-                    </li>
-                    <li>
-                        <a href="index.php">Sign out</a>
-                    </li>
-                </ul>
-            </div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container -->
@@ -122,7 +143,77 @@ $(function() {
                     <div class="site-heading">
                         <h1>Top 5 pictures</h1>
                         <hr class="small">
-                        <span class="subheading">Here is top 5 pictures from your friends.</span>
+                        <span class="subheading">Here is top 5 pictures from your friends.<br></span>
+                        <?php
+						                        
+							include("PHPconnectionDB.php");
+						    session_start();
+						    $user_name = $_SESSION['userid'];
+						    
+						//    $user_name = "admin";
+						    $conn = connect();
+
+
+						function createView($conn,$name){
+							$sql="CREATE VIEW DISPLAY_VIEW_".$name." (PHOTO_ID, SUBJECT,PLACE, DESCRIPTION,TIMING)
+								AS SELECT *
+								FROM(
+								SELECT i1.PHOTO_ID,i1.SUBJECT,i1.PLACE, i1.DESCRIPTION,i1.TIMING
+								FROM IMAGES i1
+								where i1.permitted=1
+								UNION
+								SELECT i2.PHOTO_ID,i2.SUBJECT,i2.PLACE, i2.DESCRIPTION,i2.TIMING
+								FROM IMAGES i2
+								where i2.OWNER_NAME='".$name."'
+								UNION
+								SELECT i3.PHOTO_ID,i3.SUBJECT,i3.PLACE, i3.DESCRIPTION,i3.TIMING
+								FROM IMAGES i3, GROUP_LISTS gl
+								where i3.permitted=gl.GROUP_ID
+								AND gl.friend_id='".$name."')";
+							$a = oci_parse($conn, $sql);
+							$res=oci_execute($a);
+							$r = oci_commit($conn);	
+						}
+
+						function dropViewExist($conn,$name){
+							$sql = "select view_name from user_views";
+							$a = oci_parse($conn, $sql);
+							$res=oci_execute($a);
+							
+							$vname = "display_view_$name";
+							$vname = strtoupper($vname);
+							
+						   while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+							   	
+								foreach ($row as $item) {
+									
+									if ($item == $vname){
+										
+										$sql2 = "drop view $vname";	
+										$aa = oci_parse($conn, $sql2);
+										$res=oci_execute($aa);	
+										$r = oci_commit($conn);		
+									}
+							   }
+							   
+							}
+						}
+						dropViewExist($conn,$user_name);
+						createView($conn,$user_name);
+						$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
+						$a = oci_parse($conn, $sql);
+						$res=oci_execute($a);
+
+						while (($row = oci_fetch_array($a, OCI_BOTH))) {
+							#echo $row[0];
+							 $id =$row[0];
+							 session_start();
+
+						    echo $id;
+							 #echo $_SESSION['pid'];
+							 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";	
+						}
+						 ?>
                     </div>
 
                 </div>
@@ -136,114 +227,28 @@ $(function() {
                     <div class="site-heading">
                         <h1>Friends' moment</h1>
                         <hr class="small">
-                        <span class="subheading">Check out your frineds did rencently!<br></span>
-                        
-									
-<?php
-                        
-	include("PHPconnectionDB.php");
-    session_start();
-    $user_name = $_SESSION['userid'];
-    
-//    $user_name = "admin";
-    $conn = connect();
+                        <span class="subheading">Check out your frineds did rencently!<br></span>			
+						<?php
+						$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
+						$a = oci_parse($conn, $sql);
+						$res=oci_execute($a);
 
+						while (($row = oci_fetch_array($a, OCI_BOTH))) {
+							#echo $row[0];
+							 $id =$row[0];
+							 session_start();
 
-function createView($conn,$name){
-	$sql="CREATE VIEW DISPLAY_VIEW_".$name." (PHOTO_ID, SUBJECT,PLACE, DESCRIPTION,TIMING)
-		AS SELECT *
-		FROM(
-		SELECT i1.PHOTO_ID,i1.SUBJECT,i1.PLACE, i1.DESCRIPTION,i1.TIMING
-		FROM IMAGES i1
-		where i1.permitted=1
-		UNION
-		SELECT i2.PHOTO_ID,i2.SUBJECT,i2.PLACE, i2.DESCRIPTION,i2.TIMING
-		FROM IMAGES i2
-		where i2.OWNER_NAME='".$name."'
-		UNION
-		SELECT i3.PHOTO_ID,i3.SUBJECT,i3.PLACE, i3.DESCRIPTION,i3.TIMING
-		FROM IMAGES i3, GROUP_LISTS gl
-		where i3.permitted=gl.GROUP_ID
-		AND gl.friend_id='".$name."')";
-	$a = oci_parse($conn, $sql);
-	$res=oci_execute($a);
-	$r = oci_commit($conn);	
-}
-
-function dropViewExist($conn,$name){
-	$sql = "select view_name from user_views";
-	$a = oci_parse($conn, $sql);
-	$res=oci_execute($a);
-	
-	$vname = "display_view_$name";
-	$vname = strtoupper($vname);
-	
-   while ($row = oci_fetch_array($a, OCI_ASSOC)) {
-	   	
-		foreach ($row as $item) {
-			
-			if ($item == $vname){
-				
-				$sql2 = "drop view $vname";	
-				$aa = oci_parse($conn, $sql2);
-				$res=oci_execute($aa);	
-				$r = oci_commit($conn);		
-			}
-	   }
-	   
-	}
-	}
-
-
-
-dropViewExist($conn,$user_name);
-createView($conn,$user_name);
-$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
-$a = oci_parse($conn, $sql);
-$res=oci_execute($a);
-
-while (($row = oci_fetch_array($a, OCI_BOTH))) {
-	#echo $row[0];
-	 $id =$row[0];
-	 session_start();
-
-    echo $id;
-	 #echo $_SESSION['pid'];
-	 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";
-	
-			 
-	
-}
- ?>
+						    echo $id;
+							 #echo $_SESSION['pid'];
+							 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";		 
+							
+						}
+						 ?>
              
                     </div>
                 </div>
             </div>
         </div>
-    </header>
-<header class="intro-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <div class="site-heading">
-                        <h1>Upload my pictures</h1>
-                        
-
-                        <hr class="small">
-                        <span class="subheading">Sharing your best moment with your friends!</span>
-                        
-                        
-                        
-    								<form NAME="upload" METHOD="post" action="upload_file.php">">
-
-										<input type="submit" value="Open Form">
-									</form>
-							  
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    </header> 
 </body >
 </html>

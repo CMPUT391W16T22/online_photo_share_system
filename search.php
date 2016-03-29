@@ -20,10 +20,10 @@ $checkspace=strpos($search_text," ");
 $checkand = strpos($search_text,"and");
 $checkor = strpos($search_text,"or");
 dropTableExist($conn,$name);
-createSearchView($conn,$name);
+createSearchTable($conn,$name);
 $settime="";
 if ($search_text==""){
-	timeSearch($conn,$name,$settime);
+	timeSearch($conn,$name,$from_date,$to_date);
 }elseif ($checkand==false and $checkor==false and $checkspace==false){
 	#single word with no date
 	if (empty($from_date) and empty($to_date)){
@@ -77,7 +77,7 @@ function checkTime($from_date,$to_date){
 	}
 	return $settime;
 }
-function createSearchView($conn,$name){
+function createSearchTable($conn,$name){
 	$sql="CREATE TABLE SEARCH_".$name." (
 		PHOTO_ID INT,
 		TIMING DATE,
@@ -86,12 +86,12 @@ function createSearchView($conn,$name){
 	$res=oci_execute($a);
 	$r = oci_commit($conn);
 }
-function timeSearch($conn,$name,$settime){
+function timeSearch($conn,$name,$from_date,$to_date){
 	if (!empty($from_date) and !empty($to_date)){
 		$settime="TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."')";
 	}elseif (!empty($from_date) and empty($to_date)) {
 		$settime="TIMING >to_date('".$from_date."')";
-	}elseif (!empty($from_date) and empty($to_date)) {
+	}elseif (empty($from_date) and !empty($to_date)) {
 		$settime="TIMING< to_date('".$to_date."')";
 	}
 	$sql="SELECT *  FROM DISPLAY_VIEW_".$name." WHERE ".$settime."";
