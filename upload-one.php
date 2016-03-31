@@ -1,6 +1,11 @@
 <?php
-
-    function img_resize($target, $newcopy, $w, $h) {
+/*
+* CMPUT 391 Project Online Photo Gallery
+* Written by Bo Zhou
+* Mar 26, 2016
+*
+*/
+    function img_resize($target, $newcopy, $w, $h, $ext) {
         list($w_orig, $h_orig) = getimagesize($target);
         $scale_ratio = $w_orig / $h_orig;
         if (($w / $h) > $scale_ratio) {
@@ -8,29 +13,31 @@
         } else {
             $h = $w / $scale_ratio;
         }
-        $img = imagecreatefromjpeg($target);
+        if ($ext == 'gif'){
+            $img = imagecreatefromgif($target);
+        }else{
+            $img = imagecreatefromjpeg($target);
+        }
         $tci = imagecreatetruecolor($w, $h);
         imagecopyresampled($tci, $img, 0, 0, 0, 0, $w, $h, $w_orig, $h_orig);
-        imagejpeg($tci, $newcopy, 80);
+        if ($ext == 'gif'){
+            imagegif($tci, $newcopy, 80);
+        }else {
+            imagejpeg($tci, $newcopy, 80);
+        }
     }
-
-
-    include("PHPconnectionDB.php");
+    include("connDB.php");
+    session_start();
     $conn = connect();
-
     $sql_date_format = "alter session set nls_date_format = 'dd/mm/yyyy hh24:mi:ss'";
     $stid_date_format = oci_parse( $conn, $sql_date_format );
     $result_date_format = oci_execute( $stid_date_format );
     oci_free_statement($stid_date_format);
-
-    // image
-
     $object = file_get_contents($_FILES['file']['tmp_name']);
     $now_date = $_POST['date-input'];
     if ($now_date ==''){
         $now_date = date("d/m/Y H:i:s");
     }
-
     $sql_id = "select photo_id from images";
     $id_stid = oci_parse($conn, $sql_id);
     $id_result = oci_execute($id_stid);
@@ -46,7 +53,6 @@
             break;
         };
     }
-    session_start();
     $fileName = $_FILES["file"]["name"];
     $fileTmpLoc = $_FILES["file"]["tmp_name"];
     $moveResult = move_uploaded_file($fileTmpLoc, "/tmp/" . $fileName);
@@ -56,9 +62,10 @@
     $hmax = 100;
     $ext_arr = explode(".", $fileName);
     $fileExt = end($ext_arr);
-    img_resize($target_file, $resized_file, $wmax, $hmax);
+    img_resize($target_file, $resized_file, $wmax, $hmax, $fileExt);
     $thumb_img = file_get_contents($resized_file);
-    $owner_name = $_SESSION['userid'];
+    #$owner_name = $_SESSION['USER_NAME'];
+    $owner_name = 'leon';
     $permitted_id = $_POST['group-name'];
     $subject = $_POST['title'];
     if($subject == ''){
@@ -67,7 +74,6 @@
     $description = $_POST['description'];
     $place = $_POST['place'];
     $sql = "INSERT INTO images (photo_id, owner_name, permitted, subject, place, timing, description, thumbnail, photo) VALUES('" . $id_guess . "', '" . $owner_name . "', '" . $permitted_id . "', '" . $subject ."', '". $place ."', '". $now_date."', '". $description."', empty_blob(), empty_blob() ) RETURNING thumbnail, photo INTO :thumb_img, :object";
-
     $result = oci_parse($conn, $sql);
     $blob1 = oci_new_descriptor($conn, OCI_D_LOB);
     oci_bind_by_name($result, ":thumb_img", $blob1, -1, OCI_B_BLOB);
@@ -78,18 +84,16 @@
         oci_rollback($conn);
         $blob2->free();
         header("location: upload_file.php?ACK=-1");
-        exit();
     }
     if (!$blob1->save($thumb_img)) {
         oci_rollback($conn);
         $blob1->free();
+        oci_free_statement($result);
         header("location: upload_file.php?ACK=-1");
-        exit();
     }
     oci_free_statement($result);
     unlink($target_file);
     unlink($resized_file);
-
     oci_commit($conn);
     oci_close($conn);
     header( "location: upload_file.php?ACK=1");

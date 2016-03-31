@@ -6,31 +6,34 @@
 * Mar 26, 2016
 *
 */
-    include("connDB.php");
-    session_start();
-
-    $user_name = 'leon';
-    $conn = connect();
-    $sql = "SELECT group_id, group_name FROM groups WHERE user_name='".$user_name."'";
-    $sql2 = "SELECT group_id, group_name FROM groups WHERE user_name IS NULL";
-    $stid = oci_parse( $conn, $sql );
-    $stid2 = oci_parse( $conn, $sql2);
-    $result = oci_execute( $stid );
-    $result2 = oci_execute( $stid2 );
-    if (!($result2 && $result)){
-        header( "location:index.php?ERR=err" );
-        exit();
-    }
-    $all_group_info = array();
-    while ($group = oci_fetch_row($stid2)){
-        array_push($all_group_info, $group);
-    }
-    while ($group = oci_fetch_row($stid)){
-        array_push($all_group_info, $group);
-    }
-    oci_free_statement($stid);
-    oci_free_statement($stid2);
-    oci_close($conn);
+include("PHPconnectionDB.php");
+session_start();
+if ( !isset ( $_SESSION['USER_NAME'] ) ) {
+    header( "location:index.php?ERR=session" );
+    exit();
+};
+$user_name = 'Leon';
+$conn = connect();
+$sql = "SELECT group_id, group_name FROM groups WHERE user_name='".$user_name."'";
+$sql2 = "SELECT group_id, group_name FROM groups WHERE user_name IS NULL";
+$stid = oci_parse( $conn, $sql );
+$stid2 = oci_parse( $conn, $sql2);
+$result = oci_execute( $stid );
+$result2 = oci_execute( $stid2 );
+if (!($result2 && $result)){
+    header( "location:index.php?ERR=err" );
+    exit();
+}
+$all_group_info = array();
+while ($group = oci_fetch_row($stid2)){
+    array_push($all_group_info, $group);
+}
+while ($group = oci_fetch_row($stid)){
+    array_push($all_group_info, $group);
+}
+oci_free_statement($stid);
+oci_free_statement($stid2);
+oci_close($conn);
 ?>
 
 <html>
@@ -46,11 +49,11 @@
             text-align: center;
         }
         fieldset {
-            border: 3px solid rgb(4, 13, 255);
+            border: 3px solid rgb(238, 5, 17);
             margin: 30px;
         }
         legend {
-            color: rgb(0, 0, 0);
+            color: rgb(101, 10, 243);
             font-size: 20px;
             font-weight: bold;
         }
@@ -61,17 +64,18 @@
     </style>
 </head>
 <body>
+
 <fieldset>
-    <legend>Uploading One Photo</legend>
-    <form name="upload-files" method="post" action="upload-one.php" enctype="multipart/form-data">
+    <legend>Uploading Multiple Photos</legend>
+    <form name="upload-files" method="post" action="upload-multi.php" enctype="multipart/form-data">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <?php
-        if ($_GET['ACK']==1) echo "<div id='success-show' style='color:#0000FF'>Successful uploading. Please upload another file.</div>" ;
-        elseif ($_GET['ACK']== -1) echo "<div id='success-show' style='color:#FF0000'>Cannot upload your photo. Please try again.</div>" ;
+        if ($_GET['ACK']==1) echo "<div id='success-show' style='color:#0000FF'>Successful uploading. Please upload another folder.</div>" ;
+        elseif ($_GET['ACK']== -1) echo "<div id='success-show' style='color:#FF0000'>Cannot upload photos. Please try again.</div>" ;
         ?>
         <div class='half' style="margin-top: 20px">
-            <strong>1. Select Upload File</strong><br>
-            <input name="file" type="file" id="upload-file" this.style.backgroundColor='rgb(178,234,255)' style='width: 80%; border: 1px dotted grey'><br>
+            <strong>1. Select Upload Folder</strong><br>
+            <input directory="" webkitdirectory="" mozdirectory="" directory name="file[]" type="file" id="upload-file" this.style.backgroundColor='rgb(178,234,255)' style='width: 80%; border: 1px dotted grey'><br>
         </div>
         <div class='half' style='margin-top: 30px; height: 100px'>
             <strong>2. Select Who Can See Your Photos </strong><br>
@@ -128,8 +132,8 @@
         //var fileSize = this.files[0].size;
         var fileSize = $('#upload-file')[0].files[0].size;
         var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(" + allowedFiles.join('|') + ")$");
-        if (!(regex.test(fileUpload.val().toLowerCase()) && fileSize < 10485760 )) {
-            lblError.html("Please upload files less than 10 MB with extensions: <b>" + allowedFiles.join(', ') + "</b> only.");
+        if (!(regex.test(fileUpload.val().toLowerCase()) && fileSize < 104857600 )) {
+            lblError.html("Please upload files less than 100 MB with extensions: <b>" + allowedFiles.join(', ') + "</b> only.");
             return false;
         }
         lblError.html('');
@@ -143,11 +147,11 @@
             var sFileName = file.name;
             var sFileExtension = sFileName.split('.')[sFileName.split('.').length - 1].toLowerCase();
             var iFileSize = file.size;
-            var iConvert = (file.size / 10485760).toFixed(2);
-            if (!(sFileExtension === "jpeg" ||sFileExtension === "jpg"|| sFileExtension === "gif" ) || iFileSize > 10485760) {
+            var iConvert = (file.size / 104857600).toFixed(2);
+            if (!(sFileExtension === "jpeg" ||sFileExtension === "jpg"|| sFileExtension === "gif" ) || iFileSize > 104857600) {
                 txt = "File type : " + sFileExtension + "\n\n";
                 txt += "Size: " + iConvert + " MB \n\n";
-                txt += "Please make sure your file is in jpg or jpeg or gif format and less than 10 MB.\n\n";
+                txt += "Please make sure your all photos are in jpg or jpeg or gif format and less than 100 MB total.\n\n";
                 alert(txt);
             }
         }
