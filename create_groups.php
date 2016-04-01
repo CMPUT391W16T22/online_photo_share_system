@@ -94,7 +94,7 @@ function checkExist($conn,$groupname,$name){
 <ul>
   <li><a class="active" href="costomer.php">Home</a></li>
   <li><a href="myphoto.php">My Photo</a></li>
-  <li><a href="upload_file.php">Upload Photo</a></li>
+  <li><a href="sUpload.php">Upload Photo</a></li>
   <li><a href="create_groups.php">Create new groups</a></li>
   <li><a href="edit_groups.php">Editing existing groups</a></li>
   <li><a href="index.php">Sign out</a></li>	

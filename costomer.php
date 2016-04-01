@@ -63,7 +63,7 @@ $(function() {
             <ul>
 			  <li><a class="active" href="#home">Home</a></li>
 			  <li><a href="myphoto.php">My Photo</a></li>
-			  <li><a href="upload_file.php">Upload Photo</a></li>
+			  <li><a href="sUpload.php">Upload Photo</a></li>
 			  <li><a href="create_groups.php">Create new groups</a></li>
 			  <li><a href="edit_groups.php">Editing existing groups</a></li>
 			  <li><a href="index.php">Sign out</a></li>	
@@ -106,7 +106,6 @@ $(function() {
             				$_SESSION['from_date']=$from_date;
             				$_SESSION['to_date']=$to_date;
  							$_SESSION['search_text']=$search_text;
- 							$_SESSION['view_method']=$_POST["view_method"];
 							header('Location: search.php');
 						}
 					}
@@ -117,7 +116,6 @@ $(function() {
 						$_SESSION['from_date']=$from_date;
             			$_SESSION['to_date']=$to_date;
  						$_SESSION['search_text']=$search_text;
- 						$_SESSION['view_method']=$_POST["view_method"];
 						header('Location: search.php');
 					}
 			}
@@ -133,12 +131,6 @@ $(function() {
             	<p>From: <input type="text" NAME="from_date" id="datepicker"> To: <input type="text" NAME="to_date" id="datepicker1"></p>
 				<span class="error"><?php echo $dateErr;?></span>
 				<span class="error"><?php echo $searchErr;?></span>
-				<select name="view_method" >
-				<!--<option value="0">select:</option>-->
-				<option value="0">Default</option>
-				<option value="1">Most-recent-first</option>
-				<option value="2">Most-recent-last</option>
-				</select>
             </form>
             </td>
 			</tr>
@@ -158,7 +150,7 @@ $(function() {
                         <?php
 						                        
 							include("PHPconnectionDB.php");
-						    session_start();
+						    session_start(); 
 						    $user_name = $_SESSION['userid'];
 						    
 						//    $user_name = "admin";

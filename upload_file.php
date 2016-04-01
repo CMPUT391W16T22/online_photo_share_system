@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <?php
-/*
-* CMPUT 391 Project Online Photo Gallery
-* Written by Bo Zhou
-* Mar 26, 2016
-*
-*/
+
     include("PHPconnectionDB.php");
     session_start();
 
@@ -76,7 +71,7 @@ li a:hover {
 <ul>
 			  <li><a class="active" href="costomer.php">Home</a></li>
 			  <li><a href="myphoto.php">My Photo</a></li>
-			  <li><a href="upload_file.php">Upload Photo</a></li>
+			  <li><a href="sUpload.php.php">Upload Photo</a></li>
 			  <li><a href="create_groups.php">Create new groups</a></li>
 			  <li><a href="edit_groups.php">Editing existing groups</a></li>
 			  <li><a href="index.php">Sign out</a></li>	
@@ -85,7 +80,7 @@ li a:hover {
 <div>
 	
     <h1><strong>Uploading One Photo</strong></h1>
-    <form name="upload-files" method="post" action="upload-one.php" enctype="multipart/form-data">
+    <form name="upload-files" method="post" action="uploadSingle.php" enctype="multipart/form-data">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <?php
         if ($_GET['ACK']==1) echo "<div id='success-show'>Successful uploading. Please upload another file.</div>" ;
@@ -131,6 +126,8 @@ li a:hover {
     </form>
 </div>
 
+
+
 <script type="text/javascript">
     function hideMessage() {
         var successShow = $("#success-show");
@@ -175,5 +172,17 @@ li a:hover {
         }
     }
 </script>
+
+<div>
+
+
+</div>
+
+
+
+
+
+
+
 </body>
 </html>

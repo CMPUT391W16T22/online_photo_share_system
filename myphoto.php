@@ -37,7 +37,7 @@ li a:hover {
 <ul>
   <li><a class="active" href="costomer.php">Home</a></li>
   <li><a href="myphoto.php">My Photo</a></li>
-  <li><a href="upload_file.php">Upload Photo</a></li>
+  <li><a href="sUpload.php">Upload Photo</a></li>
   <li><a href="create_groups.php">Create new groups</a></li>
   <li><a href="edit_groups.php">Editing existing groups</a></li>
   <li><a href="index.php">Sign out</a></li>	
@@ -51,6 +51,7 @@ li a:hover {
 	$sql = "SELECT photo_id from IMAGES Where OWNER_NAME= '".$user_name."'";
 	$a = oci_parse($conn, $sql);
 	$res=oci_execute($a);
+	oci_close($conn);
 	echo "<br>";
 	while (($row = oci_fetch_array($a, OCI_BOTH))) {
 		#echo $row[0];

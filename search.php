@@ -13,99 +13,213 @@ if (!empty($_SESSION['from_date']) and !empty($_SESSION['to_date'])){
 	session_start();
 	$from_date=date("d-M-Y",strtotime($_SESSION['from_date']));
 	$to_date="";
-}else{
-	$from_date="";
-	$to_date="";
 }
 $search_text=$_SESSION['search_text'];
 $name=$_SESSION['userid'];
-$order=$_SESSION['view_method'];
-dropIndexExist($conn,"DESCRPINDEX");
-dropIndexExist($conn,"PLACEINDEX");
-dropIndexExist($conn,"SUBINDEX");
-
-$q = oci_parse($conn, 'CREATE INDEX DESCRPINDEX ON IMAGES(DESCRIPTION) INDEXTYPE IS CTXSYS.CONTEXT');
-oci_execute($q, OCI_NO_AUTO_COMMIT);	
-$q = oci_parse($conn, 'CREATE INDEX PLACEINDEX ON IMAGES(PLACE) INDEXTYPE IS CTXSYS.CONTEXT');
-oci_execute($q, OCI_NO_AUTO_COMMIT);
-$q = oci_parse($conn, 'CREATE INDEX SUBINDEX ON IMAGES(SUBJECT) INDEXTYPE IS CTXSYS.CONTEXT');
-oci_execute($q);
+$checkspace=strpos($search_text," ");
+$checkand = strpos($search_text,"and");
+$checkor = strpos($search_text,"or");
+dropTableExist($conn,$name);
+createSearchTable($conn,$name);
 $settime="";
-
 if ($search_text==""){
-	$sql="SELECT PHOTO_ID FROM DISPLAY_VIEW_".$name." WHERE";
-	if ($from_date!="" and $to_date!=""){
-		$sql.="TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."')";
-	}elseif ($from_date!="") {
-		$sql.=" TIMING >=to_date('".$from_date."')";
+	timeSearch($conn,$name,$from_date,$to_date);
+}elseif ($checkand==false and $checkor==false and $checkspace==false){
+	#single word with no date
+	if (empty($from_date) and empty($to_date)){
+		singleWordSearch($conn,$search_text,$name,$settime);
+	#single word with date
 	}else{
-		$sql.=" TIMING=< to_date('".$to_date."')";
+		$settime=checkTime($from_date,$to_date);
+		singleWordSearch($conn,$search_text,$name,$settime);
 	}
-	if ($order == '0') {
-        $sql.= " ORDER BY score DESC";
-    }
-    else if ($order == '1') {
-        $sql.= " ORDER BY timing DESC";
-    }
-    else {
-        $sql.= " ORDER BY timing";
-    }
-}else{
-	$key_array = explode(' ', $search_text);
-        $contains = '%'.$key_array[0].'%';
-        foreach ($key_array as $key) {
-            if ($key_array[0] != $key) {
-                $contains = $contains.' | %'.$key.'%';
-            }
-        }
-	$sql='SELECT PHOTO_ID, ((SCORE(1) * 6) + (SCORE(2) * 3) + SCORE(3)) score  FROM IMAGES 
-		  WHERE CONTAINS (subject, \''.$contains.'\', 1) > 0 OR 
-		  CONTAINS (place, \''.$contains.'\', 2) > 0 OR 
-		  CONTAINS (description, \''.$contains.'\', 3) > 0
-		  and (owner_name = \''.$name.'\' or \''.$name.'\' = \'admin\' or permitted = 1 or permitted in 
-		  (SELECT group_id FROM group_lists WHERE friend_id = \''.$name.'\') or \''.$name.'\' 
-		  in (SELECT user_name FROM groups WHERE group_id = permitted))';
-	if ($from_date!=""){
-		$sql.="AND TIMING >to_date('".$from_date."')";
+	#space between words
+}elseif ($checkand==false and $checkor==false and $checkspace==true) {
+	$word = explode(" ", $search_text);
+	#two more words with no date 
+	if (empty($from_date) and empty($to_date)){
+		spaceSearch($conn,$word,$name,$settime);
+	}else{
+		$settime=checkTime($from_date,$to_date);
+		spaceSearch($conn,$word,$name,$settime);
 	}
-	if ($to_date!=""){
-		$sql.="AND TIMING=< to_date('".$to_date."')";
+	#contain "and" in search_text
+}elseif ($checkand==true and $checkor==false) {
+	$word = explode(" and ", $search_text);
+	if (empty($from_date) and empty($to_date)){
+		#contain "and" in search_text with no date
+		andWordSearch($conn,$word,$name,$settime);
+	}else{
+		$settime=checkTime($from_date,$to_date);
+		andWordSearch($conn,$word,$name,$settime);
 	}
-    if ($order == '0') {
-        $sql.= " ORDER BY score DESC";
-    }
-    else if ($order == '1') {
-        $sql.= " ORDER BY timing DESC";
-    }
-    else {
-        $sql.= " ORDER BY timing";
-    }
-}
-showImages($conn,$sql,$name);
+	#contain "or" in search_text
+}elseif ($checkand==false and $checkor==true) {
+	$word = explode(" or ", $search_text);
+	if (empty($from_date) and empty($to_date)){
+		orWordSearch($conn,$word,$name,$settime);
+	}else{
+		##contain "or" in search_text with date
+		$settime=checkTime($from_date,$to_date);
+		orWordSearch($conn,$word,$name,$settime);
+	}
 
-function showImages($conn,$sql,$name){
-	$a = oci_parse($conn,$sql);
+}
+header('Location: search1.php');
+						
+function checkTime($from_date,$to_date){
+	if (!empty($from_date) and !empty($to_date)){
+		$settime="AND (TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."'))";
+	}elseif (!empty($from_date) and empty($to_date)) {
+		$settime="AND (TIMING >to_date('".$from_date."'))";
+	}elseif (!empty($from_date) and empty($to_date)) {
+		$settime="AND (TIMING< to_date('".$to_date."'))";
+	}
+	return $settime;
+}
+function createSearchTable($conn,$name){
+	$sql="CREATE TABLE SEARCH_".$name." (
+		PHOTO_ID INT,
+		TIMING DATE,
+		RANK INT)";
+	$a = oci_parse($conn, $sql);
 	$res=oci_execute($a);
-	while (($row = oci_fetch_array($a, OCI_BOTH))) {
-		#echo $row[0];
-		 $id =$row[0];
-		 session_start();
+	$r = oci_commit($conn);
+}
+function timeSearch($conn,$name,$from_date,$to_date){
+	if (!empty($from_date) and !empty($to_date)){
+		$settime="TIMING >to_date('".$from_date."') and timing < to_date('".$to_date."')";
+	}elseif (!empty($from_date) and empty($to_date)) {
+		$settime="TIMING >to_date('".$from_date."')";
+	}elseif (empty($from_date) and !empty($to_date)) {
+		$settime="TIMING< to_date('".$to_date."')";
+	}
+	$sql="SELECT *  FROM DISPLAY_VIEW_".$name." WHERE ".$settime."";
+	echo $sql;
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);	
+	while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+		$check_rank=calculateRank($row['SUBJECT'],$row['PLACE'] ,$row['DESCRIPTION'] ,$search_text);
+		$q="INSERT INTO SEARCH_".$name." VALUES('". $row['PHOTO_ID'] ."', '". $row['TIMING'] ."', '".$check_rank."')"; 
+		$b = oci_parse($conn, $q);
+		$res=oci_execute($b);
+	}
+	$r = oci_commit($conn);
+		
+}
+function singleWordSearch($conn,$search_text,$name,$settime){
+	$sql="SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$search_text."%' OR place LIKE '%".$search_text."%'OR Description LIKE '%".$search_text."%')".$settime."";
+	echo $sql;
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);	
+	while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+		$check_rank=calculateRank($row['SUBJECT'],$row['PLACE'] ,$row['DESCRIPTION'] ,$search_text);
+		$q="INSERT INTO SEARCH_".$name." VALUES('". $row['PHOTO_ID'] ."', '". $row['TIMING'] ."', '".$check_rank."')"; 
+		$b = oci_parse($conn, $q);
+		$res=oci_execute($b);
+	}
+	$r = oci_commit($conn);
+		
+}
+function andWordSearch($conn,$word,$name,$settime){
+	$sql="SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$word[0]."%' OR place LIKE '%".$word[0]."%'OR Description LIKE '%".$word[0]."%')".$settime."";
+	for ($i=1; $i<count($word);$i++){
+		$a="\n
+			INTERSECT
+			SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$word[$i]."%' OR place LIKE '%".$word[$i]."%'OR Description LIKE '%".$word[$i]."%')".$settime."";
+		$sql="$sql$a";
+	}
+	#echo $sql;
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);
+	while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+		$check_rank=calculateRank($row['SUBJECT'],$row['PLACE'] ,$row['DESCRIPTION'] ,$word);
+		$q="INSERT INTO SEARCH_".$name." VALUES('". $row['PHOTO_ID'] ."', '". $row['TIMING'] ."', '".$check_rank."')"; 
+		$b = oci_parse($conn, $q);
+		$res=oci_execute($b);
+	
+		}
+	$r = oci_commit($conn);	
+}
+function spaceSearch($conn,$word,$name,$settime){
+	$sql="SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$word[0]."%' OR place LIKE '%".$word[0]."%'OR Description LIKE '%".$word[0]."%')".$settime."";
+	for ($i=1; $i<count($word);$i++){
+		$a="\n
+			UNION
+			SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$word[$i]."%' OR place LIKE '%".$word[$i]."%'OR Description LIKE '%".$word[$i]."%')".$settime."";
+		$sql="$sql$a";	
+		}
+	#echo $sql;
+	$a = oci_parse($conn, $sql);
+	$res=oci_execute($a);
+	while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+		$check_rank=calculateRank($row['SUBJECT'],$row['PLACE'] ,$row['DESCRIPTION'] ,$word);
+		$q="INSERT INTO SEARCH_".$name." VALUES('". $row['PHOTO_ID'] ."', '". $row['TIMING'] ."', '".$check_rank."')"; 
+		$b = oci_parse($conn, $q);
+		$res=oci_execute($b);
+	
+		}
+	$r = oci_commit($conn);	
+}
 
-		 #echo $_SESSION['pid'];
-		 echo "<a href='friendImage.php?pid=".$id.$name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";
+function orWordSearch($conn,$word,$name,$settime){
+	$sql="SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$word[0]."%' OR place LIKE '%".$word[0]."%'OR Description LIKE '%".$word[0]."%')".$settime."";
+	for ($i=1; $i<count($word);$i++){
+		$a="\n
+			UNION
+			SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$word[$i]."%' OR place LIKE '%".$word[$i]."%'OR Description LIKE '%".$word[$i]."%')".$settime."";
+		$sql="$sql$a MINUS ";	
+		}
+	$sql1="(SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$word[0]."%' OR place LIKE '%".$word[0]."%'OR Description LIKE '%".$word[0]."%')".$settime."";
+	for ($i=1; $i<count($word);$i++){
+		$a="\n
+			INTERSECT
+			SELECT *  FROM DISPLAY_VIEW_".$name." WHERE (subject LIKE '%".$word[$i]."%' OR place LIKE '%".$word[$i]."%'OR Description LIKE '%".$word[$i]."%')".$settime."";
+		$sql1="$sql1$a)";
+	}
+	$sql="$sql$sql1";
+	#echo $sql;
+	while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+		$check_rank=calculateRank($row['SUBJECT'],$row['PLACE'] ,$row['DESCRIPTION'] ,$word);
+		$q="INSERT INTO SEARCH_".$name." VALUES('". $row['PHOTO_ID'] ."', '". $row['TIMING'] ."', '".$check_rank."')"; 
+		$b = oci_parse($conn, $q);
+		$res=oci_execute($b);
+	
+		}
+	$r = oci_commit($conn);	
+
+	
+}
+function calculateRank($subject,$place,$description,$search_text){
+	$b=0;
+	if (!is_array($search_text)){
+		$a=6*substr_count($subject, $search_text)+3*substr_count($place, $search_text)+substr_count($description, $search_text);
+		return $a;
+	}else{
+		for ($i=0; $i<count($search_text);$i++){
+			$a=6*substr_count($subject, $search_text[$i])+3*substr_count($place, $search_text[$i])+substr_count($description, $search_text[$i]);
+			$b=$a+$b;
+		}
+	return $b;
 	}
 }
-function dropIndexExist($conn,$indexname){
-    $sql = "select index_name from user_indexes";
+function dropTableExist($conn,$name){
+    $sql = "select table_name from user_tables";
     $a = oci_parse($conn, $sql);
     $res=oci_execute($a);
-    $sql2 = "DROP INDEX $indexname";
-   while ($row = oci_fetch_array($a, OCI_ASSOC)) {        
+   
+    $vname = "search_$name";
+    $vname = strtoupper($vname);
+   
+   while ($row = oci_fetch_array($a, OCI_ASSOC)) {
+          
         foreach ($row as $item) {
-            if ($item == $indexname){
-                $sql2 = "DROP INDEX $indexname";
+           
+            if ($item == $vname){
+               
+                $sql2 = "drop table $vname";   
                 $aa = oci_parse($conn, $sql2);
-                oci_execute($aa);  
+                $res=oci_execute($aa);   
                 $r = oci_commit($conn);       
             }
        }
