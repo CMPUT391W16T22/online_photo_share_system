@@ -68,25 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}else{
 		$subword="";
 	}
-	/*if ($subword=="" and $username==""and $from_date=="" and $to_date==""){
-		$from_date=date("dd-MM-YY", strtotime($_POST["from_date"]));
-		$sql="SELECT MAX (timing) AS day_before_min FROM  ADMIN_VIEW";
-		$a = oci_parse($conn, $sql);
-		$res=oci_execute($a);
-		while ($row = oci_fetch_array($a, OCI_ASSOC)) {
-			foreach ($row as $item) {
-				$to_date=date("dd-MM-YY", strtotime($item));
-		}
-	}
-		$sql="SELECT MIN (timing) AS day_before_min FROM  ADMIN_VIEW";
-		$a = oci_parse($conn, $sql);
-		$res=oci_execute($a);
-		while ($row = oci_fetch_array($a, OCI_ASSOC)) {
-			foreach ($row as $item) {
-				$from_date=date("dd-MM-YY", strtotime($item));
-		}
-	}
-	}*/
+	$select_v=$_POST["select_v"];
 }
 function dropViewExist($conn){
 	$sql = "select view_name from user_views";
@@ -116,6 +98,9 @@ oci_commit($conn);
 
 ?>
 <H3>Data Analysis module</H3>
+<form action="adminView.php">
+<input type="submit" value="View Images">
+</form>
 <table>
 <tr>
 <td>
@@ -124,22 +109,20 @@ oci_commit($conn);
 	<p>Subject: <INPUT TYPE="text" NAME="subword"></p>
 	<p>From: <input type="text" NAME="from_date" id="datepicker"> To: <input type="text" NAME="to_date" id="datepicker1"></p>
 	<span class="error"><?php echo $dateErr;?></span><br>
-  	<input type="submit" NAME="select_w" value="Weekly">
-  </form> 
-  <form METHOD="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-  	<input type="submit" NAME="select_m" value="Monthly" action="<?php $button=1?>"> 
-  	<input type="submit" NAME="select_y" value="Yearly"> 
-</form>
+	<select name="select_v" >
+	<option value="0">select:</option>
+	<option value="1">Weekly</option>
+	<option value="2">Monthly</option>
+	<option value="3">Yearly</option>
+	</select>
+  	<input type="submit" NAME="submit" value="Apply">
 </td>
 </tr>
 </table>
 <?php
 $check=0;
 $sql="SELECT";
-
-if (!empty($_POST["select_w"])) {
-	$_POST["select_w"]=NULL;
-	echo $_POST["select_w"];
+if ($select_v==1) {
 	if($username!=""){
 		$check=1;
 		$sql.=" OWNER_NAME, ";
@@ -163,7 +146,7 @@ if (!empty($_POST["select_w"])) {
 		}	
 		echo $from_date;
 		echo $to_date;
-		echo $sql;
+		
 			echo "<table>
 				<tr>
 				<th>Total</th>
@@ -180,6 +163,7 @@ if (!empty($_POST["select_w"])) {
 		    	}
 		    	echo "</tr>";
 		}
+	}
 	}elseif ($check==1) {
 		if ($from_date!="" and $to_date!=""){
 			$sql.="where (timing BETWEEN to_date ('".$from_date."','dd-MM-YY') 
@@ -188,7 +172,7 @@ if (!empty($_POST["select_w"])) {
 		}else{
 			$sql.="where owner_name='".$username."' group by rollup(owner_name, to_char(timing, 'YYYY-ww'))";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>OWNER_NAME</th>
@@ -215,7 +199,7 @@ if (!empty($_POST["select_w"])) {
 		}else{
 			$sql.="where subject like '%".$subword."%' group by rollup(subject, to_char(timing, 'YYYY-ww'))";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>SUBJECT</th>
@@ -242,7 +226,7 @@ if (!empty($_POST["select_w"])) {
 			$sql.="where subject like '%".$subword."%' and owner_name='".$username."'
 					group by rollup(subject, to_char(timing, 'YYYY-ww'),owner_name)";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>OWNER_NAME</th>
@@ -264,8 +248,7 @@ if (!empty($_POST["select_w"])) {
 	}
 	echo "</table><br>";
 	
-}elseif ($button==1) {
-	echo "DFHAOHFIOADHFIHAFH";
+}elseif ($select_v==2) {
 	if($username!=""){
 		$check=1;
 		$sql.=" OWNER_NAME, ";
@@ -289,7 +272,7 @@ if (!empty($_POST["select_w"])) {
 		}
 		echo $from_date;
 		echo $to_date;
-		echo $sql;
+		
 			echo "<table>
 				<tr>
 				<th>Total</th>
@@ -306,6 +289,7 @@ if (!empty($_POST["select_w"])) {
 		    	}
 		    	echo "</tr>";
 		}
+	}
 	}elseif ($check==1) {
 		if ($from_date!="" and $to_date!=""){
 			$sql.="where (timing BETWEEN to_date ('".$from_date."','dd-MM-YY') 
@@ -314,7 +298,7 @@ if (!empty($_POST["select_w"])) {
 		}else{
 			$sql.="where owner_name='".$username."' group by rollup(owner_name, to_char(timing, 'YYYY-MM'))";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>OWNER_NAME</th>
@@ -341,7 +325,7 @@ if (!empty($_POST["select_w"])) {
 		}else{
 			$sql.="where subject like '%".$subword."%' group by rollup(subject, to_char(timing, 'YYYY-MM'))";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>SUBJECT</th>
@@ -368,7 +352,7 @@ if (!empty($_POST["select_w"])) {
 			$sql.="where subject like '%".$subword."%' and owner_name='".$username."'
 					group by rollup(subject, to_char(timing, 'YYYY-ww'),owner_name)";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>OWNER_NAME</th>
@@ -389,7 +373,7 @@ if (!empty($_POST["select_w"])) {
 		    echo "</tr>";
 	}
 	echo "</table><br>";
-}elseif (!empty($_POST["select_y"])) {
+}elseif ($select_v=="3") {
 	if($username!=""){
 		$check=1;
 		$sql.=" OWNER_NAME, ";
@@ -413,7 +397,7 @@ if (!empty($_POST["select_w"])) {
 		}
 		echo $from_date;
 		echo $to_date;
-		echo $sql;
+		
 			echo "<table>
 				<tr>
 				<th>Total</th>
@@ -438,7 +422,7 @@ if (!empty($_POST["select_w"])) {
 		}else{
 			$sql.="where owner_name='".$username."' group by rollup(owner_name, to_char(timing, 'YYYY'))";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>OWNER_NAME</th>
@@ -465,7 +449,7 @@ if (!empty($_POST["select_w"])) {
 		}else{
 			$sql.="where subject like '%".$subword."%' group by rollup(subject, to_char(timing, 'YYYY'))";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>SUBJECT</th>
@@ -492,7 +476,7 @@ if (!empty($_POST["select_w"])) {
 			$sql.="where subject like '%".$subword."%' and owner_name='".$username."'
 					group by rollup(subject, to_char(timing, 'YYYY'),owner_name)";
 		}
-		echo $sql;
+		
 		echo "<table>
 				<tr>
 				<th>OWNER_NAME</th>
@@ -513,8 +497,6 @@ if (!empty($_POST["select_w"])) {
 		    echo "</tr>";
 	}
 	echo "</table><br>";
-}
-}
 }
 }
 ?>
