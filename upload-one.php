@@ -60,12 +60,15 @@
     $resized_file = "/tmp/resize_" . $fileName;
     $wmax = 160;
     $hmax = 100;
+ 
+   
     $ext_arr = explode(".", $fileName);
     $fileExt = end($ext_arr);
     img_resize($target_file, $resized_file, $wmax, $hmax, $fileExt);
     $thumb_img = file_get_contents($resized_file);
     #$owner_name = $_SESSION['USER_NAME'];
-    $owner_name = 'leon';
+    
+    $owner_name = $_SESSION['userid'];
     $permitted_id = $_POST['group-name'];
     $subject = $_POST['title'];
     if($subject == ''){

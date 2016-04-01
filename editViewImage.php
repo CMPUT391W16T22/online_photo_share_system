@@ -6,7 +6,7 @@ include ("PHPconnectionDB.php");
 $conn=connect();
 
 
-$sql = "SELECT photo FROM images WHERE photo_id = ". (int) $_GET['fid'];;
+$sql = "SELECT photo FROM images WHERE photo_id = ". (int) $_GET['eid'];;
 
 
 

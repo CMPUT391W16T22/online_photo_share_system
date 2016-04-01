@@ -200,8 +200,10 @@ $(function() {
 						}
 						dropViewExist($conn,$user_name);
 						createView($conn,$user_name);
-						$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
-						$a = oci_parse($conn, $sql);
+						#$sqli ="Select v.photo_id, count(*) AS num FROM display_view_".$user_name." v, imagecont i where v.photo_id=i.photo_id GROUP BY v.photo_id ORDER BY num DESC";
+						 $sqli="select * from(Select v.photo_id, count(*), rank() over (order by count(*) desc) as rank FROM display_view_".$user_name." v, imagecont i where v.photo_id=i.photo_id GROUP BY v.photo_id) where rank<=5";						
+						#$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
+						$a = oci_parse($conn, $sqli);
 						$res=oci_execute($a);
 
 						while (($row = oci_fetch_array($a, OCI_BOTH))) {
@@ -210,8 +212,7 @@ $(function() {
 							 session_start();
 
 						    echo $id;
-							 #echo $_SESSION['pid'];
-							 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";	
+							 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id'></a><br>";	
 						}
 						 ?>
                     </div>
@@ -240,7 +241,7 @@ $(function() {
 
 						    echo $id;
 							 #echo $_SESSION['pid'];
-							 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";		 
+							 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id'></a><br>";		 
 							
 						}
 						 ?>

@@ -48,7 +48,7 @@ li a:hover {
 	$sql = "SELECT photo_id from IMAGES Where OWNER_NAME= '".$user_name."'";
 	$a = oci_parse($conn, $sql);
 	$res=oci_execute($a);
-
+	echo "<br>";
 	while (($row = oci_fetch_array($a, OCI_BOTH))) {
 		#echo $row[0];
 		 $id =$row[0];
@@ -56,7 +56,8 @@ li a:hover {
 
 	    echo $id;
 		 #echo $_SESSION['pid'];
-		 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id' width='128' height='128'></a><br>";	
+		 
+		 echo "<a href='myImage.php?pid=".$id.$user_name." onclick='test()' name=$id><img src='1.php?id=$id'></a><br><br>";	
 	}
 	 ?>
 </body>
