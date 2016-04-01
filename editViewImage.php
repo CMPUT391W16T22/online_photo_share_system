@@ -1,11 +1,11 @@
 <?php
-#load image for displaying
+# show image in view section
 include ("PHPconnectionDB.php");        
 	   //establish connection
 $conn=connect();
 
 
-$sql = "SELECT photo FROM images WHERE photo_id = ". (int) $_GET['fid'];;
+$sql = "SELECT photo FROM images WHERE photo_id = ". (int) $_GET['eid'];;
 
 
 

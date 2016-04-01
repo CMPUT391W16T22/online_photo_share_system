@@ -6,10 +6,10 @@
 * Mar 26, 2016
 *
 */
-    include("connDB.php");
+    include("PHPconnectionDB.php");
     session_start();
 
-    $user_name = 'leon';
+    $user_name=$_SESSION['userid'];
     $conn = connect();
     $sql = "SELECT group_id, group_name FROM groups WHERE user_name='".$user_name."'";
     $sql2 = "SELECT group_id, group_name FROM groups WHERE user_name IS NULL";
@@ -34,48 +34,70 @@
 ?>
 
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="upload_file" content="PHP,HTML,CSS,JAVASCRIPT">
+    
     <meta name="author" content="Di Meng" >
-    <style type="text/css">
-        body{
-            font-family: "Segoe UI", Arial, sans-serif;
-            text-align: center;
-        }
-        fieldset {
-            border: 3px solid rgb(4, 13, 255);
-            margin: 30px;
-        }
-        legend {
-            color: rgb(0, 0, 0);
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .half {
-            width: 70%;
-            margin:auto;
-        }
-    </style>
+     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <style>
+form {display: inline-block;}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ffff00;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #ffffff;
+}
+</style>
 </head>
 <body>
-<fieldset>
-    <legend>Uploading One Photo</legend>
+
+<ul>
+			  <li><a class="active" href="costomer.php">Home</a></li>
+			  <li><a href="myphoto.php">My Photo</a></li>
+			  <li><a href="upload_file.php">Upload Photo</a></li>
+			  <li><a href="create_groups.php">Create new groups</a></li>
+			  <li><a href="edit_groups.php">Editing existing groups</a></li>
+			  <li><a href="index.php">Sign out</a></li>	
+			  <div style="float:right;" ><i class="material-icons">account_circle</i><br><?php session_start(); echo $_SESSION['userid']?></div>		 
+			</ul>
+<div>
+	
+    <h1><strong>Uploading One Photo</strong></h1>
     <form name="upload-files" method="post" action="upload-one.php" enctype="multipart/form-data">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <?php
-        if ($_GET['ACK']==1) echo "<div id='success-show' style='color:#0000FF'>Successful uploading. Please upload another file.</div>" ;
-        elseif ($_GET['ACK']== -1) echo "<div id='success-show' style='color:#FF0000'>Cannot upload your photo. Please try again.</div>" ;
+        if ($_GET['ACK']==1) echo "<div id='success-show'>Successful uploading. Please upload another file.</div>" ;
+        elseif ($_GET['ACK']== -1) echo "<div id='success-show' >Cannot upload your photo. Please try again.</div>" ;
         ?>
-        <div class='half' style="margin-top: 20px">
+        <div class='half' >
             <strong>1. Select Upload File</strong><br>
-            <input name="file" type="file" id="upload-file" this.style.backgroundColor='rgb(178,234,255)' style='width: 80%; border: 1px dotted grey'><br>
+            <input name="file" type="file" id="upload-file" ><br>
         </div>
-        <div class='half' style='margin-top: 30px; height: 100px'>
+        <div>
             <strong>2. Select Who Can See Your Photos </strong><br>
-            <div id='t2' style='...'>
+            <div id='t2' >
                 <select name='group-name'>
                     <?php foreach($all_group_info as $info) {
                         if ($info[1] == "private"){
@@ -88,26 +110,26 @@
                 </select>
             </div>
         </div>
-        <div class='half' style='margin-top: 30px; height: 100px'>
+        <div >
             <strong>3. Input Date (Optional)</strong><br>
-            <input type="text" name="date-input" placeholder="Enter date: dd/mm/yyyy hh24:mi:ss" style='width: 80%'>
+            <input type="text" name="date-input" placeholder="Enter date: dd/mm/yyyy hh24:mi:ss" >
         </div>
-        <div class = 'half' style='margin-top: 30px; height: 100px'>
+        <div class = 'half' >
             <strong>4. Input Subject (Optional)</strong><br>
-            <input type="text" style="width: 80%" name="title" placeholder="Enter title here..." style='...'>
+            <input type="text"  name="title" placeholder="Enter title here..." >
         </div>
-        <div class='half' style='...'>
+        <div >
             <strong>5. Input Photo Taken Place (Optional)</strong><br>
-            <textarea name="place" placeholder="Enter place here..." style='width: 80%; height: 100px'></textarea>
+            <textarea name="place" placeholder="Enter place here..." ></textarea>
         </div>
-        <div class='half' style='margin-top: 30px; line-height: 30px'>
+        <div  >
             <strong>6. Input Description (Optional)</strong><br>
-            <textarea name="description" placeholder="Enter description here..." style='width: 80%; height: 100px'></textarea>
+            <textarea name="description" placeholder="Enter description here..." ></textarea>
         </div>
-        <span id="lblError" style="color: red;"></span>
-        <input value="Upload" name="button" id="upload-button" type="submit" style='margin-bottom: 30px'/>
+        <span id="lblError" ></span>
+        <input value="Upload" name="button" id="upload-button" type="submit" />
     </form>
-</fieldset>
+</div>
 
 <script type="text/javascript">
     function hideMessage() {

@@ -1,11 +1,12 @@
 <?php
-#load image for displaying
+
+
+
 include ("PHPconnectionDB.php");        
 	   //establish connection
 $conn=connect();
 
-
-$sql = "SELECT photo FROM images WHERE photo_id = ". (int) $_GET['fid'];;
+$sql = "SELECT thumbnail FROM images WHERE photo_id = ". (int) $_GET['id'];;
 
 
 
@@ -19,8 +20,10 @@ if (!$row) {
     echo "not found";
 } else {
 #	 print_r($row);
-    $img = $row['PHOTO']->load();
+    $img = $row['THUMBNAIL']->load();
     header("Content-type: image/jpeg");
     echo $img;
 }
 ?>
+
+

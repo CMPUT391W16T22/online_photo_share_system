@@ -1,4 +1,7 @@
+
+#this is the interface for signup
 <!DOCTYPE HTML>
+
 <html>
 <head>
 <style>
@@ -27,6 +30,8 @@ $y = "users";
 $a = "email";
 $b = "persons";
 
+
+#check if the input is empty or conflict with other constrains
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["username"])) {
      $usernameErr = "User Name is required";
@@ -122,7 +127,7 @@ function test_input($data) {
    return $data;
 }
 
-   
+#check if the select item is exist in DB  
 function checkExist($conn,$name,$x,$y){
 	
 
@@ -160,6 +165,7 @@ function checkExist($conn,$name,$x,$y){
 }
 ?>
 
+# ask user for information
 <h2>Please fill up the form below</h2>
 <p><span class="error">* required field.</span></p>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
@@ -189,30 +195,8 @@ function checkExist($conn,$name,$x,$y){
    <input type="submit" name="submit" value="Submit">
 </form>
 
-<?php
-echo "<h2>Your Input:</h2>";
-echo $username;
-echo "<br>";
-echo $first_name;
-echo "<br>";
-echo $last_name;
 
-echo "<br>";
-echo $password;
-
-echo "<br>";
-echo $email;
-echo "<br>";
-echo "<br>";
-echo $test;
-echo "<br>";
-echo $phone;
-echo "<br>";
-echo $address;
-
-
-
-?>
+# upload to DB
 
 <?php
 if ($test==1){

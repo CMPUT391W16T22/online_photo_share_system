@@ -1,4 +1,6 @@
 <?php
+
+# connect to db
 function connect(){
 	$conn = oci_connect('xinchao', 'wang0408');
 	if (!$conn) {

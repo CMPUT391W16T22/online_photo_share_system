@@ -1,13 +1,8 @@
 <?php
-
-
-
-$conn = oci_connect('xinchao', 'wang0408');
-	if (!$conn) {
-		$e = oci_error();
-		trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
-	}
-	
+# connect to database and load the image
+include ("PHPconnectionDB.php");        
+	   //establish connection
+$conn=connect();
 
 $sql = "SELECT thumbnail FROM images WHERE photo_id = ". (int) $_GET['id'];;
 
