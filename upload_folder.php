@@ -1,18 +1,80 @@
-<!DOCTYPE html>
+<html>
+<head>
+	 <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Di Meng" >
+
+    <title>IpicShare</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/clean-blog.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <link rel="stylesheet" href="/resources/demos/style.css">
+<style>
+form {display: inline-block;}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ffff00;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #ffffff;
+}
+</style>
+<script>
+$(function() {
+    $( "#datepicker" ).datepicker();
+    $( "#datepicker1" ).datepicker();
+  });
+  </script>
+</head>
+
+<body>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <ul>
+			  <li><a class="active" href="#home">Home</a></li>
+			  <li><a href="myphoto.php">My Photo</a></li>
+			  <li><a href="sUpload.php">Upload Photo</a></li>
+			  <li><a href="create_groups.php">Create new groups</a></li>
+			  <li><a href="edit_groups.php">Editing existing groups</a></li>
+			  <li><a href="index.php">Sign out</a></li>	
+			  <div ><i class="material-icons">account_circle</i><br><?php session_start(); echo $_SESSION['userid']?></div>		 
+			</ul>
+			
 <?php
-/*
-* CMPUT 391 Project Online Photo Gallery
-* Written by Bo Zhou
-* Mar 26, 2016
-*
-*/
+
 include("PHPconnectionDB.php");
 session_start();
-if ( !isset ( $_SESSION['USER_NAME'] ) ) {
-    header( "location:index.php?ERR=session" );
-    exit();
-};
-$user_name = 'Leon';
+
+$user_name = $_SESSION['userid'];
 $conn = connect();
 $sql = "SELECT group_id, group_name FROM groups WHERE user_name='".$user_name."'";
 $sql2 = "SELECT group_id, group_name FROM groups WHERE user_name IS NULL";
@@ -36,50 +98,23 @@ oci_free_statement($stid2);
 oci_close($conn);
 ?>
 
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="upload_file" content="PHP,HTML,CSS,JAVASCRIPT">
-    <meta name="author" content="Di Meng" >
-    <style type="text/css">
-        body{
-            font-family: "Segoe UI", Arial, sans-serif;
-            text-align: center;
-        }
-        fieldset {
-            border: 3px solid rgb(238, 5, 17);
-            margin: 30px;
-        }
-        legend {
-            color: rgb(101, 10, 243);
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .half {
-            width: 70%;
-            margin:auto;
-        }
-    </style>
-</head>
-<body>
 
-<fieldset>
-    <legend>Uploading Multiple Photos</legend>
-    <form name="upload-files" method="post" action="upload-multi.php" enctype="multipart/form-data">
+
+
+    <legend>Uploading Folders</legend>
+    <form name="upload-files" method="post" action="uploadAll.php" enctype="multipart/form-data">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <?php
         if ($_GET['ACK']==1) echo "<div id='success-show' style='color:#0000FF'>Successful uploading. Please upload another folder.</div>" ;
         elseif ($_GET['ACK']== -1) echo "<div id='success-show' style='color:#FF0000'>Cannot upload photos. Please try again.</div>" ;
         ?>
-        <div class='half' style="margin-top: 20px">
-            <strong>1. Select Upload Folder</strong><br>
-            <input directory="" webkitdirectory="" mozdirectory="" directory name="file[]" type="file" id="upload-file" this.style.backgroundColor='rgb(178,234,255)' style='width: 80%; border: 1px dotted grey'><br>
+        <div class='half' >
+            <strong> Select Folder</strong><br>
+            <input directory="" webkitdirectory="" mozdirectory="" directory name="file[]" type="file" id="upload-file" ><br>
         </div>
-        <div class='half' style='margin-top: 30px; height: 100px'>
-            <strong>2. Select Who Can See Your Photos </strong><br>
-            <div id='t2' style='...'>
+        <div class='half' >
+            <strong>Select group </strong><br>
+            <div id='t2' >
                 <select name='group-name'>
                     <?php foreach($all_group_info as $info) {
                         if ($info[1] == "private"){
@@ -92,26 +127,26 @@ oci_close($conn);
                 </select>
             </div>
         </div>
-        <div class='half' style='margin-top: 30px; height: 100px'>
-            <strong>3. Input Date (Optional)</strong><br>
-            <input type="text" name="date-input" placeholder="Enter date: dd/mm/yyyy hh24:mi:ss" style='width: 80%'>
+        <div class='half' >
+            <strong>Input Date (Optional)</strong><br>
+            <input type="text" name="date-input" placeholder="Enter date: dd/mm/yyyy hh24:mi:ss" >
         </div>
-        <div class = 'half' style='margin-top: 30px; height: 100px'>
-            <strong>4. Input Subject (Optional)</strong><br>
-            <input type="text" style="width: 80%" name="title" placeholder="Enter title here..." style='...'>
+        <div class = 'half' >
+            <strong>Input Subject (Optional)</strong><br>
+            <input type="text" name="title" placeholder="Enter title here..." >
         </div>
-        <div class='half' style='...'>
-            <strong>5. Input Photo Taken Place (Optional)</strong><br>
-            <textarea name="place" placeholder="Enter place here..." style='width: 80%; height: 100px'></textarea>
+        <div class='half' >
+            <strong>Input Photo Taken Place (Optional)</strong><br>
+            <textarea name="place" placeholder="Enter place here..." ></textarea>
         </div>
-        <div class='half' style='margin-top: 30px; line-height: 30px'>
-            <strong>6. Input Description (Optional)</strong><br>
-            <textarea name="description" placeholder="Enter description here..." style='width: 80%; height: 100px'></textarea>
+        <div class='half' >
+            <strong> Input Description (Optional)</strong><br>
+            <textarea name="description" placeholder="Enter description here..." ></textarea>
         </div>
-        <span id="lblError" style="color: red;"></span>
-        <input value="Upload" name="button" id="upload-button" type="submit" style='margin-bottom: 30px'/>
+        <span id="lblError" ></span>
+        <input value="Upload" name="button" id="upload-button" type="submit" />
     </form>
-</fieldset>
+
 
 <script type="text/javascript">
     function hideMessage() {

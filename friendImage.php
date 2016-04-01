@@ -59,7 +59,6 @@ $row = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS);
 echo "<img src='2.php?fid=$id'>";
 
 $user = preg_replace('/[0-9]+/', '', $test);
-echo $user;
 
 
 

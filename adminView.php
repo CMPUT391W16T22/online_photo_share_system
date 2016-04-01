@@ -1,4 +1,3 @@
-/* this is the interface for showing only my uploaded photoes*/
 
 <!DOCTYPE html>
 </html>
@@ -34,21 +33,13 @@ li a:hover {
 }
 </style>
 <body>
-<ul>
-  <li><a class="active" href="costomer.php">Home</a></li>
-  <li><a href="myphoto.php">My Photo</a></li>
-  <li><a href="sUpload.php">Upload Photo</a></li>
-  <li><a href="create_groups.php">Create new groups</a></li>
-  <li><a href="edit_groups.php">Editing existing groups</a></li>
-  <li><a href="index.php">Sign out</a></li>	
-  <div style="float:right;" ><i class="material-icons">account_circle</i><br><?php session_start(); echo $_SESSION['userid']?></div>		 
-</ul>
+
 <?php                    
 	include("PHPconnectionDB.php");
     session_start();
     $user_name = $_SESSION['userid'];
     $conn = connect();
-	$sql = "SELECT photo_id from IMAGES Where OWNER_NAME= '".$user_name."'";
+	$sql = "SELECT * from IMAGES";
 	$a = oci_parse($conn, $sql);
 	$res=oci_execute($a);
 	oci_close($conn);
@@ -61,8 +52,18 @@ li a:hover {
 	    echo $id;
 		 #echo $_SESSION['pid'];
 		 
-		 echo "<a href='myImage.php?pid=".$id.$user_name." onclick='test()' name=$id><img src='1.php?id=$id'></a><br><br>";	
+		 echo "<a href='myImage.php?pid=".$id.$user_name." onclick='test()' name=$id><img src='1.php?id=$id'></a><br><br>";
+		 	
 	}
 	 ?>
+	 
+	 
+	 
+	 
+	 
+	 <form action="admin.php" method="post">
+
+	<input type="submit" value = "back">
+	</form>
 </body>
 </html>

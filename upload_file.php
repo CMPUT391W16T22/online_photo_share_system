@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <?php
-/*
-* CMPUT 391 Project Online Photo Gallery
-* Written by Bo Zhou
-* Mar 26, 2016
-*
-*/
+
     include("PHPconnectionDB.php");
     session_start();
 
@@ -76,7 +71,7 @@ li a:hover {
 <ul>
 			  <li><a class="active" href="costomer.php">Home</a></li>
 			  <li><a href="myphoto.php">My Photo</a></li>
-			  <li><a href="upload_file.php">Upload Photo</a></li>
+			  <li><a href="sUpload.php.php">Upload Photo</a></li>
 			  <li><a href="create_groups.php">Create new groups</a></li>
 			  <li><a href="edit_groups.php">Editing existing groups</a></li>
 			  <li><a href="index.php">Sign out</a></li>	
@@ -84,19 +79,19 @@ li a:hover {
 			</ul>
 <div>
 	
-    <h1><strong>Uploading One Photo</strong></h1>
-    <form name="upload-files" method="post" action="upload-one.php" enctype="multipart/form-data">
+    <h1><strong>Upload One Photo</strong></h1>
+    <form name="upload-files" method="post" action="uploadSingle.php" enctype="multipart/form-data">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <?php
         if ($_GET['ACK']==1) echo "<div id='success-show'>Successful uploading. Please upload another file.</div>" ;
         elseif ($_GET['ACK']== -1) echo "<div id='success-show' >Cannot upload your photo. Please try again.</div>" ;
         ?>
         <div class='half' >
-            <strong>1. Select Upload File</strong><br>
+            <strong>Select Upload File</strong><br>
             <input name="file" type="file" id="upload-file" ><br>
         </div>
         <div>
-            <strong>2. Select Who Can See Your Photos </strong><br>
+            <strong> Select Who Can See Your Photos </strong><br>
             <div id='t2' >
                 <select name='group-name'>
                     <?php foreach($all_group_info as $info) {
@@ -111,25 +106,27 @@ li a:hover {
             </div>
         </div>
         <div >
-            <strong>3. Input Date (Optional)</strong><br>
+            <strong> Input Date (Optional)</strong><br>
             <input type="text" name="date-input" placeholder="Enter date: dd/mm/yyyy hh24:mi:ss" >
         </div>
         <div class = 'half' >
-            <strong>4. Input Subject (Optional)</strong><br>
+            <strong>Input Subject (Optional)</strong><br>
             <input type="text"  name="title" placeholder="Enter title here..." >
         </div>
         <div >
-            <strong>5. Input Photo Taken Place (Optional)</strong><br>
+            <strong> Input Photo Taken Place (Optional)</strong><br>
             <textarea name="place" placeholder="Enter place here..." ></textarea>
         </div>
         <div  >
-            <strong>6. Input Description (Optional)</strong><br>
+            <strong> Input Description (Optional)</strong><br>
             <textarea name="description" placeholder="Enter description here..." ></textarea>
         </div>
         <span id="lblError" ></span>
         <input value="Upload" name="button" id="upload-button" type="submit" />
     </form>
 </div>
+
+
 
 <script type="text/javascript">
     function hideMessage() {
@@ -175,5 +172,17 @@ li a:hover {
         }
     }
 </script>
+
+<div>
+
+
+</div>
+
+
+
+
+
+
+
 </body>
 </html>
