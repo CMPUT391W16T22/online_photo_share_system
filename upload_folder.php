@@ -101,7 +101,7 @@ oci_close($conn);
 
 
 
-    <legend>Uploading Multiple Photos</legend>
+    <legend>Uploading Folders</legend>
     <form name="upload-files" method="post" action="uploadAll.php" enctype="multipart/form-data">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <?php
@@ -109,11 +109,11 @@ oci_close($conn);
         elseif ($_GET['ACK']== -1) echo "<div id='success-show' style='color:#FF0000'>Cannot upload photos. Please try again.</div>" ;
         ?>
         <div class='half' >
-            <strong>1. Select Upload Folder</strong><br>
+            <strong> Select Folder</strong><br>
             <input directory="" webkitdirectory="" mozdirectory="" directory name="file[]" type="file" id="upload-file" ><br>
         </div>
         <div class='half' >
-            <strong>2. Select Who Can See Your Photos </strong><br>
+            <strong>Select group </strong><br>
             <div id='t2' >
                 <select name='group-name'>
                     <?php foreach($all_group_info as $info) {
@@ -128,19 +128,19 @@ oci_close($conn);
             </div>
         </div>
         <div class='half' >
-            <strong>3. Input Date (Optional)</strong><br>
+            <strong>Input Date (Optional)</strong><br>
             <input type="text" name="date-input" placeholder="Enter date: dd/mm/yyyy hh24:mi:ss" >
         </div>
         <div class = 'half' >
-            <strong>4. Input Subject (Optional)</strong><br>
+            <strong>Input Subject (Optional)</strong><br>
             <input type="text" name="title" placeholder="Enter title here..." >
         </div>
         <div class='half' >
-            <strong>5. Input Photo Taken Place (Optional)</strong><br>
+            <strong>Input Photo Taken Place (Optional)</strong><br>
             <textarea name="place" placeholder="Enter place here..." ></textarea>
         </div>
         <div class='half' >
-            <strong>6. Input Description (Optional)</strong><br>
+            <strong> Input Description (Optional)</strong><br>
             <textarea name="description" placeholder="Enter description here..." ></textarea>
         </div>
         <span id="lblError" ></span>
