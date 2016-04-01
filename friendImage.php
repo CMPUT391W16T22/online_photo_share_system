@@ -1,11 +1,8 @@
 <html>
-
 <body>
 
-
-
 <?php
-
+# display the full size image with its info
 
 
 function checkExist($conn,$name,$x,$y,$id){
@@ -90,7 +87,7 @@ if (!$row) {
     
     
     
-    
+    #insert into imagecont for click the image by user
     
     $t = checkExist($conn,$user,'owner_name','imagecont',$id);
     

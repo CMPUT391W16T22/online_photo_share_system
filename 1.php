@@ -1,7 +1,5 @@
 <?php
-
-
-
+# connect to database and load the image
 include ("PHPconnectionDB.php");        
 	   //establish connection
 $conn=connect();

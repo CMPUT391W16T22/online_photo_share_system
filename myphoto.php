@@ -1,4 +1,7 @@
+# this is the interface for showing only my uploaded photoes
+
 <!DOCTYPE html>
+</html>
 <html>
 <head>
 	<title>My photo</title>

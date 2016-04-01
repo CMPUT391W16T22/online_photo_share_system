@@ -26,7 +26,7 @@
             imagejpeg($tci, $newcopy, 80);
         }
     }
-    include("connDB.php");
+    include("PHPconnectionDB.php");
     session_start();
     $conn = connect();
     $sql_date_format = "alter session set nls_date_format = 'dd/mm/yyyy hh24:mi:ss'";

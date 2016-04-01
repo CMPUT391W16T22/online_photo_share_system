@@ -1,6 +1,5 @@
 <?php
-
-
+# show image in view section
 include ("PHPconnectionDB.php");        
 	   //establish connection
 $conn=connect();

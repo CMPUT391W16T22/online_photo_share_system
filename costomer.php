@@ -57,6 +57,7 @@ $(function() {
   });
   </script>
 </head>
+
 <body style="background-image: url('costomer-bg.jpg')">
             <!-- Collect the nav links, forms, and other content for toggling -->
             <ul>
@@ -68,6 +69,8 @@ $(function() {
 			  <li><a href="index.php">Sign out</a></li>	
 			  <div style="float:right;" ><i class="material-icons">account_circle</i><br><?php session_start(); echo $_SESSION['userid']?></div>		 
 			</ul>
+			
+			   # set date for searching
             <?php
 				if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					if (empty($_POST["search_text"]) and empty($_POST["from_date"]) and empty($_POST["to_date"])){
@@ -153,7 +156,7 @@ $(function() {
 						//    $user_name = "admin";
 						    $conn = connect();
 
-
+			# create view so that it contains all photos that user have permition to see
 						function createView($conn,$name){
 							$sql="CREATE VIEW DISPLAY_VIEW_".$name." (PHOTO_ID, SUBJECT,PLACE, DESCRIPTION,TIMING)
 								AS SELECT *
@@ -174,7 +177,7 @@ $(function() {
 							$res=oci_execute($a);
 							$r = oci_commit($conn);	
 						}
-
+                   # drop the exist view 
 						function dropViewExist($conn,$name){
 							$sql = "select view_name from user_views";
 							$a = oci_parse($conn, $sql);
@@ -200,12 +203,12 @@ $(function() {
 						}
 						dropViewExist($conn,$user_name);
 						createView($conn,$user_name);
-						#$sqli ="Select v.photo_id, count(*) AS num FROM display_view_".$user_name." v, imagecont i where v.photo_id=i.photo_id GROUP BY v.photo_id ORDER BY num DESC";
+					
 						 $sqli="select * from(Select v.photo_id, count(*), rank() over (order by count(*) desc) as rank FROM display_view_".$user_name." v, imagecont i where v.photo_id=i.photo_id GROUP BY v.photo_id) where rank<=5";						
 						#$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
 						$a = oci_parse($conn, $sqli);
 						$res=oci_execute($a);
-
+                  # display all satisfied images
 						while (($row = oci_fetch_array($a, OCI_BOTH))) {
 							#echo $row[0];
 							 $id =$row[0];
@@ -228,19 +231,19 @@ $(function() {
                     <div class="site-heading">
                         <h1>Friends' moment</h1>
                         <hr class="small">
-                        <span class="subheading">Check out your frineds did rencently!<br></span>			
+                        <span class="subheading">Check out your friends did rencently!<br></span>			
 						<?php
 						$sql = "select photo_id from DISPLAY_VIEW_".$user_name;
 						$a = oci_parse($conn, $sql);
 						$res=oci_execute($a);
 
 						while (($row = oci_fetch_array($a, OCI_BOTH))) {
-							#echo $row[0];
+							
 							 $id =$row[0];
 							 session_start();
-
+							 #print out all images that user can view
 						    echo $id;
-							 #echo $_SESSION['pid'];
+							 
 							 echo "<a href='friendImage.php?pid=".$id.$user_name."' target='_blank' onclick='test()' name=$id><img src='1.php?id=$id'></a><br>";		 
 							
 						}

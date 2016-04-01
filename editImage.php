@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      session_start();
 $id=$_SESSION["pid"];
      
-     
+# updating the image info with input 
 $sq = "update images set place='".$place."',subject='".$subject."',description='".$des."',permitted='".$group."',timing=to_date('".$time."', 'DD-Mon-YY HH:MI:SS') WHERE photo_id = ". (int)$id;
 echo "<br>";
 echo $sq;

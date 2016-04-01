@@ -6,7 +6,7 @@
 * Mar 26, 2016
 *
 */
-    include("connDB.php");
+    include("PHPconnectionDB.php");
     session_start();
 
     $user_name=$_SESSION['userid'];
