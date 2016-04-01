@@ -9,7 +9,7 @@ DROP TABLE group_lists;
 DROP TABLE groups;
 DROP TABLE persons;
 DROP TABLE users;
-
+DROP TABLE imagecont;
 
 CREATE TABLE users (
    user_name varchar(24),
